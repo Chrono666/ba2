@@ -1,17 +1,25 @@
 import cv2
-import numpy as np
 import glob
 
 img_array = []
+image_array = []
+arr = []
+counter = 1
 for filename in glob.glob('C:/Users/User/projects/school/ba2/data/test/*.jpg'):
     img = cv2.imread(filename)
     img = cv2.resize(img, (224, 224))
-    height, width, layers = img.shape
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    height, width, layer = img.shape
     size = (width, height)
-    img_array.append(img)
+    arr.append(img)
+    if len(arr) % 20 == 0:
+        # for generate greyscale video
+        #out = cv2.VideoWriter((str(counter) + '.avi'), cv2.VideoWriter_fourcc(*'DIVX'), 20, (width, height), 0)
+        # for generate rgb video
+        out = cv2.VideoWriter(('./data/video_test/'+str(counter) + '.avi'), cv2.VideoWriter_fourcc(*'DIVX'), 60, size)
+        counter = counter + 1
+        for i in range(len(arr)):
+            out.write(arr[i])
+        arr = []
+        out.release()
 
-out = cv2.VideoWriter('project.avi', cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
-
-for i in range(len(img_array)):
-    out.write(img_array[i])
-out.release()
