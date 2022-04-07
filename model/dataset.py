@@ -1,4 +1,8 @@
+import glob
 import os
+import random
+import shutil
+
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
@@ -62,3 +66,26 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
                                                          batch_size=batch_size,
                                                          class_mode=class_mode)
     return train_data, validation_data, test_data
+
+
+def load_random_images(path):
+    image_paths = []
+    for i in range(3):
+        image = glob.glob(random.choice(path + '.jpg'))
+        image_paths.append(random.choice(image))
+
+
+def save_example_images(input_path, output_path, number_of_images=12):
+    files_list = []
+
+    for root, dirs, files in os.walk(input_path):
+        for file in files:
+            # all
+            if file.endswith(".jpg") or file.endswith(".png") or file.endswith(".jpeg"):
+                files_list.append(os.path.join(root, file))
+
+    files_to_copy = random.sample(files_list, number_of_images)
+
+    for i, file in enumerate(files_to_copy):
+        image_name = 'data_example_' + str(i) + '.jpg'
+        shutil.copy(file, os.path.join(output_path, image_name))

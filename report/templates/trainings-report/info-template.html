@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.13.7/dist/css/uikit.min.css"/>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.13.7/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.13.7/dist/js/uikit-icons.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+        }
+
+        header {
+            margin-top: 1rem;
+            display: flex;
+        }
+
+        header img {
+            width: 8rem;
+        }
+
+        header #title {
+            margin: auto;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        nav {
+            margin-top: 3rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        nav a {
+            font: inherit;
+            font-size: x-large;
+            color: black;
+            margin: 0 0.5rem;
+        }
+
+        hr {
+            margin-top: 0;
+        }
+
+        #creation-time {
+            margin-right: 4rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        main section {
+            margin-top: 3rem;
+        }
+
+        .table {
+            margin: 1rem auto;
+            width: 80%
+        }
+
+        .table h2 {
+            text-align: center;
+        }
+
+        td img {
+            width: 15rem;
+        }
+    </style>
+    <title>{{document_title}}</title>
+</head>
+<body>
+<header>
+    <img src="https://as2.ftcdn.net/v2/jpg/02/94/79/43/1000_F_294794307_GQDgU09MBNHLyqoU1lRzxhnMg4ZMMdMT.jpg"
+         alt="neural network">
+    <h1 id="title">Training report</h1>
+</header>
+<nav>
+    <ul>
+        <li><a href="#" style="color: aqua">Information</a></li>
+        <li><a href="./results.html">Results</a></li>
+        <li><a href="./visual.html">Visualizations</a></li>
+    </ul>
+</nav>
+<hr>
+<section>
+    <time id="creation-time">{{date}}</time>
+</section>
+<main>
+    <section id="optimizer-parameters">
+        <div class="table">
+            <h2>Optimizer Parameters</h2>
+            <table class="uk-table uk-table-striped">
+                <thead>
+                <tr>
+                    <th>Optimizer:</th>
+                    <th>Learning rate:</th>
+                    <th>Beta 1:</th>
+                    <th>Beta 2:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{optimizer}}</td>
+                    <td>{{learning_rate}}</td>
+                    <td>{{beta_1}}</td>
+                    <td>{{beta_2}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="parameters">
+        <div class="table">
+            <h2>Parameters</h2>
+            <table class="uk-table uk-table-striped">
+                <thead>
+                <tr>
+                    <th>Batch Size:</th>
+                    <th>Epochs:</th>
+                    <th>Early Stopping Patience:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{batch_size}}</td>
+                    <td>{{epochs}}</td>
+                    <td>{{early_stopping_patience}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="architecture">
+        <div class="table">
+            <h2>Model Architecture</h2>
+            <ul uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" href="#">Click to show model architecture</a>
+                    <div style="text-align: center" class="uk-accordion-content">
+                        <img src="../images/model_architecture.png" alt="">
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <section id="dataset">
+        <div class="table">
+            <h2>Dataset</h2>
+            <table class="uk-table uk-table-striped">
+                <thead>
+                <tr>
+                    <th>Name:</th>
+                    <th>Total size:</th>
+                    <th>Split ratio:</th>
+                    <th>Training-data size:</th>
+                    <th>Validation-data size:</th>
+                    <th>Test-data size:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{dataset_name}}</td>
+                    <td>{{dataset_size}}</td>
+                    <td>{{split_ratio}}</td>
+                    <td>{{train_data_size}}</td>
+                    <td>{{val_data_size}}</td>
+                    <td>{{test_data_size}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="example-images">
+        <div class="table">
+            <h2>Example Images from the Dataset</h2>
+            <table class="uk-table uk-table-divider">
+                <tbody>
+                <tr>
+                    <td><img src="../images/data_example_0.jpg" alt=""></td>
+                    <td><img src="../images/data_example_1.jpg" alt=""></td>
+                    <td><img src="../images/data_example_2.jpg" alt=""></td>
+                </tr>
+                <tr>
+                    <td><img src="../images/data_example_3.jpg" alt=""></td>
+                    <td><img src="../images/data_example_4.jpg" alt=""></td>
+                    <td><img src="../images/data_example_5.jpg" alt=""></td>
+                </tr>
+                <tr>
+                    <td><img src="../images/data_example_6.jpg" alt=""></td>
+                    <td><img src="../images/data_example_7.jpg" alt=""></td>
+                    <td><img src="../images/data_example_8.jpg" alt=""></td>
+                </tr>
+                <tr>
+                    <td><img src="../images/data_example_9.jpg" alt=""></td>
+                    <td><img src="../images/data_example_10.jpg" alt=""></td>
+                    <td><img src="../images/data_example_11.jpg" alt=""></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

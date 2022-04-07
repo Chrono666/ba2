@@ -1,36 +1,141 @@
-import tensorflow as tf
-from tensorflow import keras
-import numpy as np
+import argparse
+import time
+from datetime import datetime, timedelta
 
-from scripts.model import Model
-import scripts.dataset as dataset
+import numpy as np
+import tensorflow as tf
+
+import model.dataset as dataset
+from model.custom_model import \
+    build_model, save_model_data, train_model, compile_model, set_layers_trainable
+from report.report_generator import ReportGenerator
 
 # use random seed to reproduce results
 np.random.seed(42)
 tf.random.set_seed(42)
+log = {}
+
+parser = argparse.ArgumentParser(description='train')
+parser.add_argument(
+    '--batch-size',
+    '-b',
+    type=int,
+    default=64,
+    metavar='BZ',
+    help='batch size (default: 64)')
+parser.add_argument(
+    '--pre-learning-rate',
+    type=float,
+    default=1e-3,
+    metavar='PLR',
+    help='learning rate for pretraining (default: 0.001)')
+parser.add_argument(
+    '--learning-rate',
+    type=float,
+    default=1e-3,
+    metavar='LR',
+    help='learning rate (default: 0.001)')
+parser.add_argument(
+    '--beta-1',
+    type=float,
+    default=0.9,
+    help='beta 1 for Adam (default: 150)')
+parser.add_argument(
+    '--beta-2',
+    type=float,
+    default=0.999,
+    help='beta 2 for Adam (default: 150)')
+parser.add_argument(
+    '--pre-epochs',
+    type=int,
+    default=5,
+    help='epochs for pretraining (default: 5)')
+parser.add_argument(
+    '--epochs',
+    type=int,
+    default=100,
+    help='epochs (default: 100)')
+parser.add_argument(
+    '--early-stopping',
+    type=int,
+    default=20,
+    help='patience value for early stopping (default: 20)')
+parser.add_argument(
+    '--data-dir',
+    default='data/cropped_full/balanced_data',
+    metavar='DD',
+    help='data dir')
+
+args = parser.parse_args()
 
 if __name__ == '__main__':
+    # load data
     preprocess_config = dataset.preprocess_config()
 
-    train_data, val_data, test_data = dataset.load_dataset('data/cropped_full/balanced_data', target_size=(224, 224),
-                                                           batch_size=64, class_mode='binary',
+    train_data, val_data, test_data = dataset.load_dataset(args.data_dir, target_size=(224, 224),
+                                                           batch_size=args.batch_size, class_mode='binary',
                                                            configuration=preprocess_config)
 
-    model = Model()
-    model.compile_model(0.0001, 0.9, 0.999, ['accuracy', 'Recall', 'Precision', 'AUC'])
-    model.set_layers_trainable(False)
-    history = model.train(train_data, val_data, epochs=5)
-    model.set_layers_trainable(True)
-    custom_early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
-    model = model.compile_model(0.0001, 0.9, 0.999, ['accuracy', 'Recall', 'Precision', 'AUC'])
-    history = model.train(train_data, val_data, 100, [custom_early_stopping])
+    dataset_name = args.data_dir.split('/')[-2] if args.data_dir.split('/')[-1] == 'balanced_data' else \
+        args.data_dir.split('/')[-1]
+
+    # initialize the trainings report
+    report_generator = ReportGenerator('train', 'report/templates', './')
+
+    # build the model
+    model = build_model()
+    model = compile_model(model, args.pre_learning_rate, args.beta_1, args.beta_2,
+                          ['accuracy', 'Recall', 'Precision', 'AUC'])
+
+    time_of_start = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
+    train_start = time.time()
+    set_layers_trainable(model, False)
+    history = train_model(model, train_data, val_data, epochs=args.pre_epochs)
+    set_layers_trainable(model, True)
+
+    # callbacks
+    early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=args.early_stopping)
+
+    # train the model
+    model = compile_model(model, args.learning_rate, args.beta_1, args.beta_2,
+                          ['accuracy', 'Recall', 'Precision', 'AUC'])
+    history = train_model(model, train_data, val_data, epochs=args.epochs,
+                          callbacks=[early_stopping])
+
+    train_end = time.time()
+    total_time = timedelta(seconds=(train_end - train_start))
+
+    report_generator.generate_folder_structure()
+
     loss, accuracy, recall, precision, auc = model.evaluate(test_data)
-    # F1 score
+
+    save_model_data(model, file_path='saved_models', date=time_of_start, model_name='vgg16', dataset_name=dataset_name,
+                    train_data_size=len(train_data), val_data_size=len(val_data), test_data_size=len(test_data))
     f1 = 2 * ((precision * recall) / (precision + recall))
 
-    print(f"loss: {loss}, \n"
-          f"accuracy: {accuracy}, \n"
-          f"recall: {recall}, \n"
-          f"precision: {precision}, \n"
-          f"auc: {auc}, \n"
-          f"F1: {f1}")
+    report_generator.save_model_architecture(model)
+    report_generator.save_train_figures_in_folder(history)
+    report_generator.save_example_img(args.data_dir)
+    report_generator.save_kernel_img(model)
+
+    dataset_size = train_data.samples + val_data.samples + test_data.samples
+
+    report_generator.generate_info_page(date=time.asctime(time.localtime(time.time())),
+                                        learning_rate=args.learning_rate, beta_1=args.beta_1, beta_2=args.beta_2,
+                                        split_ratio='0.7-0.15-0.15', dataset_name=dataset_name,
+                                        dataset_size=str(dataset_size), train_data_size=str(train_data.samples),
+                                        val_data_size=str(val_data.samples), test_data_size=str(test_data.samples),
+                                        epochs=args.epochs, batch_size=args.batch_size,
+                                        early_stopping_patience=args.early_stopping,
+                                        )
+
+    report_generator.generate_results_page(execution_time=total_time, epochs=len(history.history['loss']), loss=loss,
+                                           accuracy=accuracy, recall=recall, precision=precision, auc=auc, f1=f1
+                                           )
+
+    report_generator.generate_visual_page()
+
+    print('Model trained successfully!')
+    print('Total time: {}'.format(total_time))
+    print('Report was generated and can be found in the target folder.')

@@ -1,3 +1,5 @@
-/notebooks/model_trainer.ipynb
-/data/
 .idea/
+/notebooks/
+/data/
+/target/
+/saved_models/
