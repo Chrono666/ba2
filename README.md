@@ -41,7 +41,7 @@ $ conda activate ba2
 or use the graphical interface (anaconda-navigator) to import it.
 
 Also, for plotting the model architecture graphviz is used, which has to be installed separately and added to the path
-variable.
+variable (https://graphviz.org/download/).
 
 #### NOTE:
 
