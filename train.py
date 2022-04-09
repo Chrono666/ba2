@@ -8,7 +8,7 @@ import tensorflow as tf
 import model.dataset as dataset
 from model.custom_model import \
     build_model, save_model_data, train_model, compile_model, set_layers_trainable
-from report.report_generator import ReportGenerator
+from report_builder.report_generator import ReportGenerator
 
 # use random seed to reproduce results
 np.random.seed(42)
@@ -26,15 +26,15 @@ parser.add_argument(
 parser.add_argument(
     '--pre-learning-rate',
     type=float,
-    default=1e-3,
+    default=1e-4,
     metavar='PLR',
-    help='learning rate for pretraining (default: 0.001)')
+    help='learning rate for pretraining (default: 0.0001)')
 parser.add_argument(
     '--learning-rate',
     type=float,
-    default=1e-3,
+    default=1e-4,
     metavar='LR',
-    help='learning rate (default: 0.001)')
+    help='learning rate (default: 0.0001)')
 parser.add_argument(
     '--beta-1',
     type=float,
@@ -62,7 +62,7 @@ parser.add_argument(
     help='patience value for early stopping (default: 20)')
 parser.add_argument(
     '--data-dir',
-    default='data/cropped_full/balanced_data',
+    default='data',
     metavar='DD',
     help='data dir')
 
@@ -79,8 +79,8 @@ if __name__ == '__main__':
     dataset_name = args.data_dir.split('/')[-2] if args.data_dir.split('/')[-1] == 'balanced_data' else \
         args.data_dir.split('/')[-1]
 
-    # initialize the trainings report
-    report_generator = ReportGenerator('train', 'report/templates', './')
+    # initialize the trainings report_builder
+    report_generator = ReportGenerator('train', 'report_builder/templates', './')
 
     # build the model
     model = build_model()
@@ -110,16 +110,21 @@ if __name__ == '__main__':
 
     loss, accuracy, recall, precision, auc = model.evaluate(test_data)
 
+    dataset_size = train_data.samples + val_data.samples + test_data.samples
+
     save_model_data(model, file_path='saved_models', date=time_of_start, model_name='vgg16', dataset_name=dataset_name,
-                    train_data_size=len(train_data), val_data_size=len(val_data), test_data_size=len(test_data))
+                    dataset_size=dataset_size, train_data_size=train_data.samples, val_data_size=val_data.samples,
+                    test_data_size=test_data.samples)
+
     f1 = 2 * ((precision * recall) / (precision + recall))
 
-    report_generator.save_model_architecture(model)
+    try:
+        report_generator.save_model_architecture(model)
+    except:
+        print("Could not save model architecture. Make sure graphviz is installed.")
     report_generator.save_train_figures_in_folder(history)
     report_generator.save_example_img(args.data_dir)
     report_generator.save_kernel_img(model)
-
-    dataset_size = train_data.samples + val_data.samples + test_data.samples
 
     report_generator.generate_info_page(date=time.asctime(time.localtime(time.time())),
                                         learning_rate=args.learning_rate, beta_1=args.beta_1, beta_2=args.beta_2,

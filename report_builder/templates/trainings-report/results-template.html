@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.13.7/dist/css/uikit.min.css"/>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.13.7/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.13.7/dist/js/uikit-icons.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+        }
+
+        header {
+            margin-top: 1rem;
+            display: flex;
+        }
+
+        header img {
+            width: 8rem;
+        }
+
+        header #title {
+            margin: auto;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        nav {
+            margin-top: 3rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        nav a {
+            font: inherit;
+            font-size: x-large;
+            color: black;
+            margin: 0 0.5rem;
+        }
+
+        hr {
+            margin-top: 0;
+        }
+
+        #creation-time {
+            margin-right: 4rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        main section {
+            margin-top: 3rem;
+        }
+
+        .table {
+            margin: 1rem auto;
+            width: 80%
+        }
+
+        .table h2 {
+            /*text-align: center;*/
+        }
+
+        td img {
+            width: 25rem;
+        }
+    </style>
+    <title>{{document_title}}</title>
+</head>
+<body>
+<header>
+    <img src="https://as2.ftcdn.net/v2/jpg/02/94/79/43/1000_F_294794307_GQDgU09MBNHLyqoU1lRzxhnMg4ZMMdMT.jpg"
+         alt="neural network">
+    <h1 id="title">Training report</h1>
+</header>
+<nav>
+    <ul>
+        <li><a href="./info.html">Information</a></li>
+        <li><a href="#" style="color: #1e87f0">Results</a></li>
+        <li><a href="./visual.html">Visualizations</a></li>
+    </ul>
+</nav>
+<hr>
+<section>
+    <time id="creation-time">{{date}}</time>
+</section>
+<main>
+    <section id="execution-times">
+        <div class="table">
+            <h2>Training Times</h2>
+            <table class="uk-table uk-table-striped">
+                <thead>
+                <tr>
+                    <th>Execution Time:</th>
+                    <th>Time per Epoch:</th>
+                    <th>Epochs:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{execution_time}}</td>
+                    <td>{{time_per_epoch}}</td>
+                    <td>{{epochs}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="results">
+        <div class="table">
+            <h2>Results</h2>
+            <p>Results were generated on test set</p>
+            <table class="uk-table uk-table-striped">
+                <thead>
+                <tr>
+                    <th>Loss:</th>
+                    <th>Accuracy:</th>
+                    <th>Recall:</th>
+                    <th>Precision:</th>
+                    <th>AUC:</th>
+                    <th>F1:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{loss}}</td>
+                    <td>{{accuracy}}</td>
+                    <td>{{recall}}</td>
+                    <td>{{precision}}</td>
+                    <td>{{auc}}</td>
+                    <td>{{f1}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section id="graphs">
+        <div class="table">
+            <h2>Evaluation Graphs</h2>
+            <p>Visualize the metrics evaluated on the validation set</p>
+            <table class="uk-table uk-table-divider">
+                <thead>
+                <tr>
+                    <th>Loss vs val_loss:</th>
+                    <th>accuracy vs val_accuracy:</th>
+                    <th>recall vs val_recall:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><img src="../images/train_figures/loss.png" alt=""></td>
+                    <td><img src="../images/train_figures/accuracy.png" alt=""></td>
+                    <td><img src="../images/train_figures/recall.png" alt=""></td>
+                </tr>
+                </tbody>
+                <thead>
+                <tr>
+                    <th>precision vs val_precision:</th>
+                    <th>auc vs val_auc:</th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><img src="../images/train_figures/precision.png" alt=""></td>
+                    <td><img src="../images/train_figures/auc.png" alt=""></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

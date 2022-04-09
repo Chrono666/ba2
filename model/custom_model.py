@@ -1,9 +1,13 @@
+import glob
 import os
 import h5py
+import cv2
+import numpy as np
 
 import tensorflow as tf
 from tensorflow.python.keras.saving import hdf5_format
 from tensorflow.keras.models import load_model
+from model.dataset import get_file_list, load_classify_data
 
 
 def build_model(input_shape=(224, 224, 3), dropout_rate=0.25, output_activation='sigmoid'):
@@ -37,7 +41,16 @@ def train_model(model, train_data, validation_data, epochs, callbacks=[]):
                      callbacks=callbacks)
 
 
-def save_model_data(model, file_path, date, model_name, dataset_name, train_data_size, val_data_size, test_data_size):
+def classify_with_model(model, img_array):
+    all_predictions = []
+    for img in img_array:
+        predictions = model.predict(img)
+        all_predictions.append(predictions)
+    return all_predictions
+
+
+def save_model_data(model, file_path, date, model_name, dataset_name, dataset_size, train_data_size, val_data_size,
+                    test_data_size):
     root_model_path = os.path.join(file_path, date)
     metadata_path = os.path.join(root_model_path, 'metadata')
     model_path = os.path.join(root_model_path, 'model')
@@ -48,19 +61,48 @@ def save_model_data(model, file_path, date, model_name, dataset_name, train_data
         hdf5_format.save_model_to_hdf5(model, f)
         f.attrs['model_name'] = model_name
         f.attrs['dataset_name'] = dataset_name
+        f.attrs['data_set_size'] = dataset_size,
         f.attrs['train_data_size'] = train_data_size,
         f.attrs['val_data_size'] = val_data_size,
         f.attrs['test_data_size'] = test_data_size
 
 
 def load_model_with_metadata(file_path):
-    with h5py.File(file_path, mode='r') as f:
-        metadata = {
-            'model_name': f.attrs['model_name'],
-            'dataset_name': f.attrs['dataset_name'],
-            'train_data_size': f.attrs['train_data_size'],
-            'val_data_size': f.attrs['val_data_size'],
-            'test_data_size': f.attrs['test_data_size']
-        }
-        model = load_model(file_path)
+    for filename in glob.glob('{}/*.hdf5'.format(file_path + '/metadata')):
+        with h5py.File(filename, mode='r') as f:
+            metadata = {
+                'model_name': f.attrs['model_name'],
+                'dataset_name': f.attrs['dataset_name'],
+                'train_data_size': f.attrs['train_data_size'],
+                'val_data_size': f.attrs['val_data_size'],
+                'test_data_size': f.attrs['test_data_size']
+            }
+            model = load_model(os.path.join(file_path, 'model'))
     return model, metadata
+
+
+def get_predictions_from_model(model, input_path):
+    true_positives = []
+    true_negatives = []
+    false_positive = []
+    false_negative = []
+    img_arr, file_list = load_classify_data(input_path)
+    for img, file in zip(img_arr, file_list):
+        prediction = model.predict(img)
+        if prediction[0] == 0 and file.rsplit('\\', 2)[1] == 'DEF':
+            true_negatives.append((prediction, file))
+            print('{} was classified correctly as DEF'.format(file.rsplit('\\', 1)[-1]))
+        elif prediction[0] == 0 and file.rsplit('\\', 2)[1] == 'OK':
+            false_positive.append((prediction, file))
+            print('{} was classified incorrectly as OK'.format(file.rsplit('\\', 1)[-1]))
+        elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'OK':
+            true_positives.append((prediction, file))
+            print('{} was classified correctly as OK'.format(file.rsplit('\\', 1)[-1]))
+        elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'DEF':
+            false_negative.append((prediction, file))
+            print('{} was classified incorrectly as DEF'.format(file.rsplit('\\', 1)[-1]))
+
+    return (true_positives, true_negatives), (false_positive, false_negative)
+
+
+

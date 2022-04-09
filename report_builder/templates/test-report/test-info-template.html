@@ -71,11 +71,12 @@
         }
 
         .table h2 {
-            /*text-align: center;*/
+            text-align: center;
         }
 
-        td img {
-            width: 25rem;
+        #images li a {
+            width: 40rem;
+            margin: 0 auto;
         }
     </style>
     <title>{{document_title}}</title>
@@ -88,9 +89,9 @@
 </header>
 <nav>
     <ul>
-        <li><a href="./info.html">Information</a></li>
-        <li><a href="#" style="color: aqua">Results</a></li>
-        <li><a href="./visual.html">Visualizations</a></li>
+        <li><a href="./info.html" style="color: #1e87f0">Information</a></li>
+        <li><a href="./grad-cam.html">Grad Cam</a></li>
+        <li><a href="./feature-maps.html">Feature Maps</a></li>
     </ul>
 </nav>
 <hr>
@@ -98,86 +99,65 @@
     <time id="creation-time">{{date}}</time>
 </section>
 <main>
-    <section id="execution-times">
+    <section id="model-info">
         <div class="table">
-            <h2>Training Times</h2>
+            <h2>Classifier Model Information</h2>
             <table class="uk-table uk-table-striped">
                 <thead>
                 <tr>
-                    <th>Execution Time:</th>
-                    <th>Time per Epoch:</th>
-                    <th>Epochs:</th>
+                    <th>Model Name:</th>
+                    <th>Dataset Name:</th>
+                    <th>Dataset Size:</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{execution_time}}</td>
-                    <td>{{time_per_epoch}}</td>
-                    <td>{{epochs}}</td>
+                    <td>{{model_name}}</td>
+                    <td>{{dataset_name}}</td>
+                    <td>{{dataset_size}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </section>
-    <section id="results">
+    <section id="parameters">
         <div class="table">
-            <h2>Results</h2>
-            <p>Results were generated on test set</p>
+            <h2>Parameters</h2>
             <table class="uk-table uk-table-striped">
                 <thead>
                 <tr>
-                    <th>Loss:</th>
-                    <th>Accuracy:</th>
-                    <th>Recall:</th>
-                    <th>Precision:</th>
-                    <th>AUC:</th>
-                    <th>F1:</th>
+                    <th>Number of classified images:</th>
+                    <th>Classified Correct:</th>
+                    <th>Classified Incorrect:</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{loss}}</td>
-                    <td>{{accuracy}}</td>
-                    <td>{{recall}}</td>
-                    <td>{{precision}}</td>
-                    <td>{{auc}}</td>
-                    <td>{{f1}}</td>
+                    <td>{{classified_image_size}}</td>
+                    <td>{{classified_ok}}</td>
+                    <td>{{classified_def}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </section>
-    <section id="graphs">
+    <section id="images">
         <div class="table">
-            <h2>Evaluation Graphs</h2>
-            <p>Visualize the metrics evaluated on the validation set</p>
-            <table class="uk-table uk-table-divider">
-                <thead>
-                <tr>
-                    <th>Loss vs val_loss:</th>
-                    <th>accuracy vs val_accuracy:</th>
-                    <th>recall vs val_recall:</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><img src="../images/loss.png" alt=""></td>
-                    <td><img src="../images/accuracy.png" alt=""></td>
-                    <td><img src="../images/recall.png" alt=""></td>
-                </tr>
-                </tbody>
-                <thead>
-                <tr>
-                    <th>precision vs val_precision:</th>
-                    <th>auc vs val_auc:</th>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><img src="../images/precision.png" alt=""></td>
-                    <td><img src="../images/auc.png" alt=""></td>
-                </tr>
-                </tbody>
-            </table>
+            <h2>Classified Images</h2>
+            <ul uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" href="#">Click to display correctly classified images</a>
+                    <div style="text-align: center" class="uk-accordion-content">
+                        <img src="../images" alt="">
+                    </div>
+                </li>
+                <li>
+                    <a class="uk-accordion-title" href="#">Click to display incorrectly classified images</a>
+                    <div style="text-align: center" class="uk-accordion-content">
+                        <img src="../images" alt="">
+                    </div>
+                </li>
+            </ul>
         </div>
     </section>
 </main>

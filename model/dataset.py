@@ -2,7 +2,10 @@ import glob
 import os
 import random
 import shutil
+import cv2
+import numpy as np
 
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
@@ -68,16 +71,52 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
     return train_data, validation_data, test_data
 
 
-def load_random_images(path):
-    image_paths = []
-    for i in range(3):
-        image = glob.glob(random.choice(path + '.jpg'))
-        image_paths.append(random.choice(image))
+def get_file_list(input_path):
+    files_list = []
+    for root, dirs, files in os.walk(input_path):
+        for file in files:
+            # all
+            if file.endswith(".jpg") or file.endswith(".png") or file.endswith(".jpeg"):
+                files_list.append(os.path.join(root, file))
+    return files_list
+
+
+def load_classify_data(input_path, image_size=(224, 224)):
+    files_list = get_file_list(input_path)
+    tensor_img_array = []
+    for filename in files_list:
+        img = tf.keras.preprocessing.image.load_img(
+            filename, target_size=image_size
+        )
+        np_img = tf.keras.preprocessing.image.img_to_array(img)
+        np_img = tf.expand_dims(np_img, 0)  # Create batch axis
+        tensor_img_array.append(np_img)
+    return tensor_img_array, files_list
+
+
+def load_images_for_grad_cam(input_path, image_size=(224, 224)):
+    images_for_computing_heatmap = []
+    images_for_overlay = []
+    files_list = get_file_list(input_path)
+    for filename in files_list:
+        img = cv2.imread(filename)
+        img = cv2.resize(img, image_size)
+        images_for_overlay.append(img)
+        img = img.astype('float32') / 255
+        img = np.expand_dims(img, axis=0)
+        images_for_computing_heatmap.append(img)
+    return images_for_computing_heatmap, [cv2.cvtColor(img, cv2.COLOR_BGR2RGB) for img in images_for_overlay]
 
 
 def save_example_images(input_path, output_path, number_of_images=12):
-    files_list = []
+    """Selects a random number of images from a path and saves them to a new directory
 
+    Arguments:
+        input_path (str): path to the root directory of the dataset.
+        output_path (str): path to the directory where the images will be saved.
+        number_of_images (int): number of images to be saved.
+    """
+    files_list = get_file_list(input_path)
     for root, dirs, files in os.walk(input_path):
         for file in files:
             # all
@@ -89,3 +128,5 @@ def save_example_images(input_path, output_path, number_of_images=12):
     for i, file in enumerate(files_to_copy):
         image_name = 'data_example_' + str(i) + '.jpg'
         shutil.copy(file, os.path.join(output_path, image_name))
+
+def plot_false_negatives(input_path, output_path):

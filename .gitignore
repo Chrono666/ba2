@@ -1,5 +1,6 @@
 .idea/
 /notebooks/
 /data/
+/data_storage/
 /target/
 /saved_models/
