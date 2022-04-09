@@ -1,4 +1,3 @@
-import math
 import os
 import time
 from datetime import datetime
@@ -6,7 +5,6 @@ from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 
 from model.dataset import save_example_images
-
 from utils.figure_plot import plot_train_figures, plot_grad_cams, plot_kernels, plot_model_architecture, \
     extract_feature_maps_from_conv_layers, plot_classified_images
 

@@ -18,7 +18,6 @@ log = {}
 parser = argparse.ArgumentParser(description='train')
 parser.add_argument(
     '--batch-size',
-    '-b',
     type=int,
     default=64,
     metavar='BZ',
@@ -141,6 +140,9 @@ if __name__ == '__main__':
 
     report_generator.generate_visual_page()
 
+    print('\n')
+    print('-' * 80)
     print('Model trained successfully!')
     print('Total time: {}'.format(total_time))
     print('Report was generated and can be found in the target folder.')
+    print('\n')

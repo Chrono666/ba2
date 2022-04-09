@@ -1,10 +1,9 @@
-import glob
 import os
 import random
 import shutil
+
 import cv2
 import numpy as np
-
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -128,4 +127,3 @@ def save_example_images(input_path, output_path, number_of_images=12):
     for i, file in enumerate(files_to_copy):
         image_name = 'data_example_' + str(i) + '.jpg'
         shutil.copy(file, os.path.join(output_path, image_name))
-

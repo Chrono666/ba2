@@ -1,13 +1,12 @@
 import glob
 import os
-import h5py
-import cv2
-import numpy as np
 
+import h5py
 import tensorflow as tf
-from tensorflow.python.keras.saving import hdf5_format
 from tensorflow.keras.models import load_model
-from model.dataset import get_file_list, load_classify_data
+from tensorflow.python.keras.saving import hdf5_format
+
+from model.dataset import load_classify_data
 
 
 def build_model(input_shape=(224, 224, 3), dropout_rate=0.25, output_activation='sigmoid'):
@@ -77,7 +76,7 @@ def load_model_with_metadata(file_path):
                 'val_data_size': f.attrs['val_data_size'],
                 'test_data_size': f.attrs['test_data_size']
             }
-            model = load_model(os.path.join(file_path, 'model'))
+    model = load_model(os.path.join(file_path, 'model'))
     return model, metadata
 
 
@@ -93,15 +92,12 @@ def get_predictions_from_model(model, input_path):
             true_negatives.append((prediction, file))
             # print('{} was classified correctly as DEF'.format(file.rsplit('\\', 1)[-1]))
         elif prediction[0] == 0 and file.rsplit('\\', 2)[1] == 'OK':
-            false_positive.append((prediction, file))
+            false_negative.append((prediction, file))
             # print('{} was classified incorrectly as OK'.format(file.rsplit('\\', 1)[-1]))
         elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'OK':
             true_positives.append((prediction, file))
             # print('{} was classified correctly as OK'.format(file.rsplit('\\', 1)[-1]))
         elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'DEF':
-            false_negative.append((prediction, file))
+            false_positive.append((prediction, file))
             # print('{} was classified incorrectly as DEF'.format(file.rsplit('\\', 1)[-1]))
     return true_positives, true_negatives, false_positive, false_negative
-
-
-
