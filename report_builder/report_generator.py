@@ -5,10 +5,10 @@ from datetime import datetime
 
 from jinja2 import Environment, FileSystemLoader
 
-from model.dataset import save_example_images, plot_false_negatives, plot_false_positives, plot_true_positives, \
-    plot_true_negatives
+from model.dataset import save_example_images
+
 from utils.figure_plot import plot_train_figures, plot_grad_cams, plot_kernels, plot_model_architecture, \
-    extract_feature_maps_from_conv_layers
+    extract_feature_maps_from_conv_layers, plot_classified_images
 
 
 class ReportGenerator:
@@ -19,12 +19,17 @@ class ReportGenerator:
         self.new_report_folder_path = os.path.join(self.target_folder_path, self.__get_datetime_for_folder())
         self.html_folder_path = os.path.join(self.new_report_folder_path, 'html')
         self.image_folder_path = os.path.join(self.new_report_folder_path, 'images')
-        self.train_figure_path = os.path.join(self.image_folder_path, 'train_figures')
-        self.example_img_path = os.path.join(self.image_folder_path, 'examples')
-        self.kernel_img_path = os.path.join(self.image_folder_path, 'kernels')
-        self.grad_cam_img_path = os.path.join(self.image_folder_path, 'grad_cams')
-        self.feature_map_img_path = os.path.join(self.image_folder_path, 'feature_maps')
-        self.incorrect_img_path = os.path.join(self.image_folder_path, 'incorrect_images')
+        if self.report_type == 'train':
+            self.train_figure_path = os.path.join(self.image_folder_path, 'train_figures')
+            self.example_img_path = os.path.join(self.image_folder_path, 'examples')
+            self.kernel_img_path = os.path.join(self.image_folder_path, 'kernels')
+        if self.report_type == 'test':
+            self.grad_cam_img_path = os.path.join(self.image_folder_path, 'grad_cams')
+            self.feature_map_img_path = os.path.join(self.image_folder_path, 'feature_maps')
+            self.false_positive_path = os.path.join(self.image_folder_path, 'false_positives')
+            self.false_negative_path = os.path.join(self.image_folder_path, 'false_negatives')
+            self.true_positive_path = os.path.join(self.image_folder_path, 'true_positives')
+            self.true_negative_path = os.path.join(self.image_folder_path, 'true_negatives')
         self.__initialize_templates()
 
     def __initialize_templates(self):
@@ -49,6 +54,10 @@ class ReportGenerator:
         if self.report_type == 'test':
             os.mkdir(self.grad_cam_img_path)
             os.mkdir(self.feature_map_img_path)
+            os.mkdir(self.false_positive_path)
+            os.mkdir(self.false_negative_path)
+            os.mkdir(self.true_positive_path)
+            os.mkdir(self.true_negative_path)
         os.mkdir(self.html_folder_path)
 
     @staticmethod
@@ -74,13 +83,15 @@ class ReportGenerator:
     def save_feature_maps(self, model, images):
         extract_feature_maps_from_conv_layers(model=model, path=self.feature_map_img_path, images=images)
 
-    def save_false_incorrect_classified(self, input_path):
-        plot_false_negatives(input_path=input_path, output_path=self.incorrect_img_path)
-        plot_false_positives(input_path=input_path, output_path=self.incorrect_img_path)
-
-    def save_false_positive_images(self, input_path):
-        plot_true_positives(input_path=input_path, output_path=self.incorrect_img_path)
-        plot_true_negatives(input_path=input_path, output_path=self.incorrect_img_path)
+    def save_classified_images(self, img_paths, img_prefix):
+        if img_prefix == 'false_negatives':
+            plot_classified_images(img_paths=img_paths, output_path=self.false_negative_path, img_prefix=img_prefix)
+        elif img_prefix == 'false_positives':
+            plot_classified_images(img_paths=img_paths, output_path=self.false_positive_path, img_prefix=img_prefix)
+        elif img_prefix == 'true_negatives':
+            plot_classified_images(img_paths=img_paths, output_path=self.true_negative_path, img_prefix=img_prefix)
+        elif img_prefix == 'true_positives':
+            plot_classified_images(img_paths=img_paths, output_path=self.true_positive_path, img_prefix=img_prefix)
 
     def generate_info_page(self, date=time.asctime(time.localtime(time.time())), optimizer='Adam', learning_rate=0.001,
                            beta_1=0.9, beta_2=0.999, batch_size=64, epochs=100, early_stopping_patience=20,
@@ -127,20 +138,25 @@ class ReportGenerator:
         with open(os.path.join(self.html_folder_path, 'visual.html'), 'w') as f:
             f.write(visual_page)
 
-    def generate_test_info_page(self, model_name, dataset_name, dataset_size, classified_image_size, classified_ok,
-                                classified_def):
+    def generate_test_info_page(self, model_name, dataset_name, dataset_size, classified_image_size, true_positives,
+                                false_positives, false_negatives, true_negatives):
         test_info_page = self.test_info_template.render(document_title='Overall Information',
                                                         model_name=model_name,
                                                         dataset_name=dataset_name,
                                                         dataset_size=dataset_size,
                                                         classified_image_size=classified_image_size,
-                                                        classified_ok=classified_ok,
-                                                        classified_def=classified_def)
+                                                        true_positives=true_positives,
+                                                        false_positives=false_positives,
+                                                        false_negatives=false_negatives,
+                                                        true_negatives=true_negatives
+                                                        )
         with open(os.path.join(self.html_folder_path, 'info.html'), 'w') as f:
             f.write(test_info_page)
 
-    def render_grad_cam_template(self):
-        self.grad_cam_template.render(document_title='Grad Cam Images')
+    def generate_grad_cam_page(self):
+        cam_page = self.grad_cam_template.render(document_title='Grad Cam Images')
+        with open(os.path.join(self.html_folder_path, 'grad-cam.html'), 'w') as f:
+            f.write(cam_page)
 
     def generate_feature_map_page(self):
         map_page = self.feature_map_template.render(document_title='Feature Maps')

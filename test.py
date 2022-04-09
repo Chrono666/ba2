@@ -26,8 +26,12 @@ model, metadata = load_model_with_metadata(args.model_path)
 images_for_prediction, _ = load_classify_data(args.data_dir)
 images_for_heat_map, images = load_images_for_grad_cam(args.data_dir)
 
-(true_positive, true_negative), (false_positive, false_negative) = get_predictions_from_model(model, args.data_dir)
-print('positive_ok: ', true_positive)
+true_positives, true_negatives, false_positives, false_negatives = get_predictions_from_model(model, args.data_dir)
+
+true_positives_paths = [el[1] for el in true_positives if len(true_positives) > 0]
+true_negatives_paths = [el[1] for el in true_negatives if len(true_negatives) > 0]
+false_positives_paths = [el[1] for el in false_positives if len(false_positives) > 0]
+false_negatives_paths = [el[1] for el in false_negatives if len(false_negatives) > 0]
 
 report_generator.generate_folder_structure()
 try:
@@ -37,9 +41,17 @@ except:
 
 report_generator.save_grad_cam_img(model=model, images_of_heatmap=images_for_heat_map, images=images)
 report_generator.save_feature_maps(model=model, images=images_for_heat_map)
+report_generator.save_classified_images(false_negatives_paths, img_prefix='false_negatives')
+report_generator.save_classified_images(false_positives_paths, img_prefix='false_positives')
+report_generator.save_classified_images(true_negatives_paths, img_prefix='true_negatives')
+report_generator.save_classified_images(true_positives_paths, img_prefix='true_positives')
 
 report_generator.generate_test_info_page(model_name=metadata['model_name'], dataset_name=metadata['dataset_name'],
                                          dataset_size=22, classified_image_size=len(images_for_prediction),
-                                         classified_ok=2, classified_def=1)
+                                         true_positives=len(true_positives_paths),
+                                         true_negatives=len(true_negatives_paths),
+                                         false_positives=len(false_positives_paths),
+                                         false_negatives=len(false_negatives_paths))
 
 report_generator.generate_feature_map_page()
+report_generator.generate_grad_cam_page()

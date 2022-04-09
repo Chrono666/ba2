@@ -129,4 +129,3 @@ def save_example_images(input_path, output_path, number_of_images=12):
         image_name = 'data_example_' + str(i) + '.jpg'
         shutil.copy(file, os.path.join(output_path, image_name))
 
-def plot_false_negatives(input_path, output_path):

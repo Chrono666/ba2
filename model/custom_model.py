@@ -91,18 +91,17 @@ def get_predictions_from_model(model, input_path):
         prediction = model.predict(img)
         if prediction[0] == 0 and file.rsplit('\\', 2)[1] == 'DEF':
             true_negatives.append((prediction, file))
-            print('{} was classified correctly as DEF'.format(file.rsplit('\\', 1)[-1]))
+            # print('{} was classified correctly as DEF'.format(file.rsplit('\\', 1)[-1]))
         elif prediction[0] == 0 and file.rsplit('\\', 2)[1] == 'OK':
             false_positive.append((prediction, file))
-            print('{} was classified incorrectly as OK'.format(file.rsplit('\\', 1)[-1]))
+            # print('{} was classified incorrectly as OK'.format(file.rsplit('\\', 1)[-1]))
         elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'OK':
             true_positives.append((prediction, file))
-            print('{} was classified correctly as OK'.format(file.rsplit('\\', 1)[-1]))
+            # print('{} was classified correctly as OK'.format(file.rsplit('\\', 1)[-1]))
         elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'DEF':
             false_negative.append((prediction, file))
-            print('{} was classified incorrectly as DEF'.format(file.rsplit('\\', 1)[-1]))
-
-    return (true_positives, true_negatives), (false_positive, false_negative)
+            # print('{} was classified incorrectly as DEF'.format(file.rsplit('\\', 1)[-1]))
+    return true_positives, true_negatives, false_positive, false_negative
 
 
 

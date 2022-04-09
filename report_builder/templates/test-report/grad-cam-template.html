@@ -65,23 +65,27 @@
             margin-top: 3rem;
         }
 
-        .table {
-            margin: 1rem auto;
-            width: 80%
-        }
-
-        .table h2 {
+        #gradcam {
             text-align: center;
         }
 
-        #feature-maps li a {
-            width: 40rem;
+        #gradcam li a {
+            width: 45rem;
             margin: 0 auto;
         }
-        #architecture li a {
-            margin: 4rem auto;
-            width: 25rem;
+
+        #image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 25rem);
+            justify-content: center;
         }
+
+        #image-grid img {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
     </style>
     <title>{{document_title}}</title>
 </head>
@@ -95,7 +99,7 @@
     <ul>
         <li><a href="./info.html">Information</a></li>
         <li><a href="#" style="color: #1e87f0">Grad Cam</a></li>
-        <li><a href="./feature-maps.html">Feature Maps</a></li>
+        <li><a href="./feature-map.html">Feature Maps</a></li>
     </ul>
 </nav>
 <hr>
@@ -103,99 +107,29 @@
     <time id="creation-time">{{date}}</time>
 </section>
 <main>
-    <section id="feature-maps">
-        <div class="table">
-            <h2>Feature Maps extracted from a random classified image</h2>
+    <section id="gradcam">
+        <div>
+            <h2>Grad Cam Images</h2>
+            <p>All Images can be found in the images' folder of the report</p>
             <ul uk-accordion>
                 <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block1_conv1 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block1_conv1.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block1_conv2 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block1_conv2.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block2_conv1 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block2_conv1.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block2_conv2 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block2_conv2.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block3_conv1 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block3_conv1.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block3_conv2 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block3_conv2.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block3_conv3 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block3_conv3.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block4_conv1 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block4_conv1.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block4_conv2 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block4_conv2.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block4_conv3 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block4_conv3.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block5_conv1 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block5_conv1.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block5_conv2 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block5_conv2.png" alt=""></td>
-                    </div>
-                </li>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to display the feature maps of the block5_conv3 layer</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <td><img src="../images/feature_maps/block5_conv3.png" alt=""></td>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </section>
-    <section id="architecture">
-        <div class="table">
-            <h2>Model Architecture</h2>
-            <ul uk-accordion>
-                <li>
-                    <a class="uk-accordion-title" href="#">Click to show model architecture</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <img src="../images/model_architecture.png" alt="">
+                    <a class="uk-accordion-title" href="#">Examples of the generated Grad Cam Images</a>
+                    <div id='image-grid' style="text-align: center" class="uk-accordion-content">
+                        <img src="../images/grad_cams/grad_cam0.png">
+                        <img src="../images/grad_cams/grad_cam1.png">
+                        <img src="../images/grad_cams/grad_cam2.png">
+                        <img src="../images/grad_cams/grad_cam3.png">
+                        <img src="../images/grad_cams/grad_cam4.png">
+                        <img src="../images/grad_cams/grad_cam5.png">
+                        <img src="../images/grad_cams/grad_cam6.png">
+                        <img src="../images/grad_cams/grad_cam7.png">
+                        <img src="../images/grad_cams/grad_cam8.png">
+                        <img src="../images/grad_cams/grad_cam9.png">
+                        <img src="../images/grad_cams/grad_cam10.png">
+                        <img src="../images/grad_cams/grad_cam11.png">
+                        <img src="../images/grad_cams/grad_cam12.png">
+                        <img src="../images/grad_cams/grad_cam13.png">
+                        <img src="../images/grad_cams/grad_cam14.png">
                     </div>
                 </li>
             </ul>

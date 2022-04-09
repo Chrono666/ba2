@@ -99,7 +99,11 @@ def extract_feature_maps_from_conv_layers(model, images, path):
                     # plot filter channel in grayscale
                     plt.imshow(feature_maps[0, :, :, ix - 1], cmap='gray')
                     ix += 1
-            # show the figure
             save_fig(layer.name, path)
 
 
+def plot_classified_images(img_paths, output_path, img_prefix):
+    for index, img_path in enumerate(img_paths):
+        img = plt.imread(img_path)
+        plt.imshow(img)
+        save_fig((img_prefix + str(index)), output_path)

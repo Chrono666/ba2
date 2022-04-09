@@ -70,13 +70,24 @@
             width: 80%
         }
 
-        .table h2 {
+        h2 {
+            text-align: center;
+        }
+
+
+        #images p {
             text-align: center;
         }
 
         #images li a {
-            width: 40rem;
+            width: 45rem;
             margin: 0 auto;
+        }
+
+        #images li img {
+            width: 30rem;
+            margin: 0 auto;
+            padding: 0;
         }
     </style>
     <title>{{document_title}}</title>
@@ -91,7 +102,7 @@
     <ul>
         <li><a href="./info.html" style="color: #1e87f0">Information</a></li>
         <li><a href="./grad-cam.html">Grad Cam</a></li>
-        <li><a href="./feature-maps.html">Feature Maps</a></li>
+        <li><a href="./feature-map.html">Feature Maps</a></li>
     </ul>
 </nav>
 <hr>
@@ -127,34 +138,75 @@
                 <thead>
                 <tr>
                     <th>Number of classified images:</th>
-                    <th>Classified Correct:</th>
-                    <th>Classified Incorrect:</th>
+                    <th>Classified True Positives:</th>
+                    <th>Classified True Negatives:</th>
+                    <th>Classified False Negative:</th>
+                    <th>Classified False Positives:</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>{{classified_image_size}}</td>
-                    <td>{{classified_ok}}</td>
-                    <td>{{classified_def}}</td>
+                    <td>{{true_positives}}</td>
+                    <td>{{true_negatives}}</td>
+                    <td>{{false_negatives}}</td>
+                    <td>{{false_positives}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </section>
     <section id="images">
-        <div class="table">
-            <h2>Classified Images</h2>
-            <ul uk-accordion>
+        <h2>Example Images of the classified Images</h2>
+        <p>All Images can be found in the images' folder of the report</p>
+        <div>
+            <ul id="true-positives" uk-accordion>
                 <li>
-                    <a class="uk-accordion-title" href="#">Click to display correctly classified images</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <img src="../images" alt="">
+                    <a class="uk-accordion-title" href="#">True Positives (Images classified as OK which where in the OK
+                        folder)</a>
+                    <div style="display: flex" class="uk-accordion-content">
+                        <img src="../images/true_positives/true_positives0.png" alt="">
+                        <img src="../images/true_positives/true_positives1.png" alt="">
+                        <img src="../images/true_positives/true_positives2.png" alt="">
                     </div>
                 </li>
+            </ul>
+        </div>
+        <div>
+            <ul id="true-negatives" uk-accordion>
                 <li>
-                    <a class="uk-accordion-title" href="#">Click to display incorrectly classified images</a>
-                    <div style="text-align: center" class="uk-accordion-content">
-                        <img src="../images" alt="">
+                    <a class="uk-accordion-title" href="#">True Negatives (Images classified as DEF which where in the
+                        DEF folder)</a>
+                    <div style="display: flex" class="uk-accordion-content">
+                        <img src="../images/true_negatives/true_negatives0.png" alt="">
+                        <img src="../images/true_negatives/true_negatives1.png" alt="">
+                        <img src="../images/true_negatives/true_negatives2.png" alt="">
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <ul id="false-negatives" uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" href="#">False Negatives (Images classified as DEF which where in the
+                        OK folder)</a>
+                    <div style="display: flex" class="uk-accordion-content">
+                        <img src="../images/false_negatives/false_negatives0.png" alt="">
+                        <img src="../images/false_negatives/false_negatives1.png" alt="">
+                        <img src="../images/false_negatives/false_negatives2.png" alt="">
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <ul id="false-positives" uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" href="#">False Positives (Images classified as OK which where in the
+                        DEF folder)</a>
+                    <div style="display: flex" class="uk-accordion-content">
+                        <img src="../images/false_positives/false_positives0.png" alt="">
+                        <img src="../images/false_positives/false_positives1.png" alt="">
+                        <img src="../images/false_positives/false_positives2.png" alt="">
                     </div>
                 </li>
             </ul>
