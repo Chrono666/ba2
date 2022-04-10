@@ -50,6 +50,7 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
         batch_size (int): size of the batch.
         class_mode (str): class mode of the dataset.
         configuration (ImageDataGenerator): ImageDataGenerator object with preprocessing configuration.
+        color_mode (str): defines the color mode of the images, default rgb.
     """
     train_path = os.path.join(path, 'train')
     val_path = os.path.join(path, 'val')
@@ -62,10 +63,12 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
     validation_data = ImageDataGenerator().flow_from_directory(val_path,
                                                                target_size=target_size,
                                                                batch_size=batch_size,
+                                                               color_mode=color_mode,
                                                                class_mode=class_mode)
     test_data = ImageDataGenerator().flow_from_directory(test_path,
                                                          target_size=target_size,
                                                          batch_size=batch_size,
+                                                         color_mode=color_mode,
                                                          class_mode=class_mode)
     return train_data, validation_data, test_data
 

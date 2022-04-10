@@ -72,6 +72,7 @@ def load_model_with_metadata(file_path):
             metadata = {
                 'model_name': f.attrs['model_name'],
                 'dataset_name': f.attrs['dataset_name'],
+                'dataset_size': f.attrs['data_set_size'],
                 'train_data_size': f.attrs['train_data_size'],
                 'val_data_size': f.attrs['val_data_size'],
                 'test_data_size': f.attrs['test_data_size']

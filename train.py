@@ -75,8 +75,10 @@ if __name__ == '__main__':
                                                            batch_size=args.batch_size, class_mode='binary',
                                                            configuration=preprocess_config)
 
-    dataset_name = args.data_dir.split('/')[-2] if args.data_dir.split('/')[-1] == 'balanced_data' else \
-        args.data_dir.split('/')[-1]
+    dataset_size = train_data.samples + val_data.samples + test_data.samples
+
+    dataset_name = args.data_dir.split('/')[-3] if args.data_dir.split('/')[-2] == 'balanced_data' else \
+        args.data_dir.split('/')[-2]
 
     # initialize the trainings report_builder
     report_generator = ReportGenerator('train', 'report_builder/templates', './')
@@ -108,8 +110,6 @@ if __name__ == '__main__':
     report_generator.generate_folder_structure()
 
     loss, accuracy, recall, precision, auc = model.evaluate(test_data)
-
-    dataset_size = train_data.samples + val_data.samples + test_data.samples
 
     save_model_data(model, file_path='saved_models', date=time_of_start, model_name='vgg16', dataset_name=dataset_name,
                     dataset_size=dataset_size, train_data_size=train_data.samples, val_data_size=val_data.samples,

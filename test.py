@@ -48,7 +48,7 @@ if __name__ == '__main__':
     report_generator.save_classified_images(true_positives_paths, img_prefix='true_positives')
 
     report_generator.generate_test_info_page(model_name=metadata['model_name'], dataset_name=metadata['dataset_name'],
-                                             dataset_size=metadata['dataset_size'],
+                                             dataset_size=len(metadata['dataset_size']),
                                              classified_image_size=len(images_for_prediction),
                                              true_positives=len(true_positives_paths),
                                              true_negatives=len(true_negatives_paths),
