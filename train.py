@@ -45,6 +45,11 @@ parser.add_argument(
     default=0.999,
     help='beta 2 for Adam (default: 150)')
 parser.add_argument(
+    '--dropout-rate',
+    type=float,
+    default=0.25,
+    help='dropout rate (default: 0.25)')
+parser.add_argument(
     '--pre-epochs',
     type=int,
     default=5,
@@ -84,7 +89,7 @@ if __name__ == '__main__':
     report_generator = ReportGenerator('train', 'report_builder/templates', './')
 
     # build the model
-    model = build_model()
+    model = build_model(dropout_rate=args.dropout_rate)
     model = compile_model(model, args.pre_learning_rate, args.beta_1, args.beta_2,
                           ['accuracy', 'Recall', 'Precision', 'AUC'])
 
