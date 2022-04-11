@@ -34,7 +34,7 @@ v_envs folder of the project (currently only windows supported).
 In the command line move to the env folder of the project and use the following commands:
 
 ```bash
-$ conda env create -f ba2.yml
+$ conda env create -f ba2.yaml
 $ conda activate ba2
 ```  
 
