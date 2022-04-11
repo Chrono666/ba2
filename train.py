@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
     try:
         report_generator.save_model_architecture(model)
-    except:
+    except ImportError:
         print("Could not save model architecture. Make sure graphviz is installed.")
     report_generator.save_train_figures_in_folder(history)
     report_generator.save_example_img(args.data_dir)

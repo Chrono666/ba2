@@ -35,7 +35,11 @@ if __name__ == '__main__':
     false_negatives_paths = [el[1] for el in false_negatives if len(false_negatives) > 0]
 
     report_generator.generate_folder_structure()
-    report_generator.save_model_architecture(model)
+
+    try:
+        report_generator.save_model_architecture(model)
+    except ImportError:
+         print("Could not save model architecture. Make sure graphviz is installed.")
 
     try:
         report_generator.save_grad_cam_img(model=model, images_of_heatmap=images_for_heat_map, images=images)
