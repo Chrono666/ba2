@@ -59,11 +59,11 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
                                                    target_size=target_size,
                                                    batch_size=batch_size,
                                                    class_mode=class_mode)
-    validation_data = ImageDataGenerator().flow_from_directory(val_path,
+    validation_data = ImageDataGenerator(rescale=1./255).flow_from_directory(val_path,
                                                                target_size=target_size,
                                                                batch_size=batch_size,
                                                                class_mode=class_mode)
-    test_data = ImageDataGenerator().flow_from_directory(test_path,
+    test_data = ImageDataGenerator(rescale=1./255).flow_from_directory(test_path,
                                                          target_size=target_size,
                                                          batch_size=batch_size,
                                                          class_mode=class_mode)
