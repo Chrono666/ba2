@@ -1,10 +1,17 @@
 import os
+
 import cv2
 from imutils import paths
 from tqdm import tqdm
 
 
 def dhash(image, hashSize=8):
+    """ Compute the difference hash of an image.
+
+    Arguments:
+        image (str): The image(path) to compute the hash of.
+        hashSize (int): The size of the hash in bits.
+    """
     # convert the image to grayscale and resize the grayscale image,
     # adding a single column (width) so we can compute the horizontal
     # gradient
@@ -18,6 +25,11 @@ def dhash(image, hashSize=8):
 
 
 def remove_duplicates(input_path):
+    """ Remove duplicate images from a directory by comparing their hashes.
+
+    Arguments:
+        input_path (str): The path to the directory to remove duplicates from.
+    """
     imagePaths = list(paths.list_images(input_path))
     hashes = {}
     # loop over our image paths

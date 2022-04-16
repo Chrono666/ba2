@@ -1,8 +1,8 @@
 import glob
 import os
+from pathlib import PurePath
 
 import h5py
-from pathlib import PurePath
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.python.keras.saving import hdf5_format
@@ -10,6 +10,13 @@ from tqdm import tqdm
 
 
 def build_model(input_shape=(224, 224, 3), dropout_rate=0.25, output_activation='sigmoid'):
+    """ Builds the custom VGG16 model by loading a pre-trained model and adding a custom fully connected layer.
+
+    Arguments:
+        input_shape {tuple} -- The shape of the input data.
+        dropout_rate {float} -- The dropout rate to use.
+        output_activation {str} -- The activation function to use for the output layer.
+    """
     model_input = tf.keras.Input(shape=input_shape)
 
     base_model = tf.keras.applications.vgg16.VGG16(weights='imagenet', include_top=False, input_shape=input_shape,
@@ -23,17 +30,41 @@ def build_model(input_shape=(224, 224, 3), dropout_rate=0.25, output_activation=
 
 
 def compile_model(model, alpha, beta1, beta2, metrics):
+    """ Compiles the model with the given hyperparameters.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to compile.
+        alpha {float} -- The learning rate.
+        beta1 {float} -- The beta1 hyperparameter.
+        beta2 {float} -- The beta2 hyperparameter.
+        metrics {list} -- The metrics that will be watched during training.
+    """
     optimizer = tf.keras.optimizers.Adam(learning_rate=alpha, beta_1=beta1, beta_2=beta2)
     model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=metrics)
     return model
 
 
 def set_layers_trainable(model, set_trainable):
+    """ Sets the trainable property of all layers in the model.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to modify.
+        set_trainable {bool} -- Whether the layers should be trainable.
+    """
     for layer in model.layers:
         layer.trainable = set_trainable
 
 
 def train_model(model, train_data, validation_data, epochs, callbacks=[]):
+    """ Trains the model with the given data.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to train.
+        train_data {tuple} -- The training data.
+        validation_data {tuple} -- The validation data.
+        epochs {int} -- The number of epochs to train for.
+        callbacks {list} -- The callbacks to use during training.
+    """
     return model.fit(train_data,
                      validation_data=validation_data,
                      epochs=epochs,
@@ -41,6 +72,12 @@ def train_model(model, train_data, validation_data, epochs, callbacks=[]):
 
 
 def classify_with_model(model, img_array):
+    """ Classifies the given image array with the model.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to use for classification.
+        img_array {np.ndarray} -- The image array to classify.
+    """
     all_predictions = []
     for img in img_array:
         predictions = model.predict(img)
@@ -50,6 +87,20 @@ def classify_with_model(model, img_array):
 
 def save_model_data(model, file_path, date, model_name, dataset_name, dataset_size, train_data_size, val_data_size,
                     test_data_size):
+    """ Saves the model once by using the keras model.save method.
+        and once in h5 format containing metadata used for reporting.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to save.
+        file_path {str} -- The path to save the model to.
+        date {str} -- The date the model was saved.
+        model_name {str} -- The name of the model.
+        dataset_name {str} -- The name of the dataset.
+        dataset_size {int} -- The size of the dataset.
+        train_data_size {int} -- The size of the training data.
+        val_data_size {int} -- The size of the validation data.
+        test_data_size {int} -- The size of the test data.
+    """
     root_model_path = os.path.join(file_path, date)
     metadata_path = os.path.join(root_model_path, 'metadata')
     model_path = os.path.join(root_model_path, 'model')
@@ -67,6 +118,11 @@ def save_model_data(model, file_path, date, model_name, dataset_name, dataset_si
 
 
 def load_model_with_metadata(file_path):
+    """ Loads a model and its metadata from the given file path.
+
+    Arguments:
+        file_path {str} -- The path to the model and metadata.
+    """
     for filename in glob.glob('{}/*.hdf5'.format(file_path + '/metadata')):
         with h5py.File(filename, mode='r') as f:
             metadata = {
@@ -82,6 +138,14 @@ def load_model_with_metadata(file_path):
 
 
 def get_predictions_from_model(model, img_arr, file_list):
+    """ Used a model to classify images and sort them according
+        to true positives, true negatives, false positives, false negatives.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to use for classification.
+        img_arr {np.ndarray} -- The image array to classify.
+        file_list {list} -- file path of images to reconstruct TP, TN, FP, FN.
+    """
     true_positives = []
     true_negatives = []
     false_positive = []

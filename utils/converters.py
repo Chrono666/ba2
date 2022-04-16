@@ -2,11 +2,11 @@ import glob
 import os
 import random
 
-from tqdm import tqdm
 import cv2
 import numpy as np
 import skvideo.io
 import splitfolders
+from tqdm import tqdm
 
 
 def convert_image_to_video(input_path, output_path, new_frame_width, new_frame_height, video_format='avi', frames=60,
@@ -131,6 +131,11 @@ def reduce_data(input_path, frame_rate):
 
 
 def level_out_dataset_classes(input_path):
+    """ Compare number of images of two folders and deletes the difference from the bigger folder.
+
+    Arguments:
+        input_path {str} -- directory path
+    """
     ok_image_size = 0
     def_image_size = 0
     ok_image_files = []
@@ -162,6 +167,12 @@ def level_out_dataset_classes(input_path):
 
 
 def split_raw_data_into_train_val_test(input_path, ratio=(0.7, 0.15, 0.15)):
+    """Split raw data into train, validation and test set.
+
+    Arguments:
+        input_path {str} -- path to raw data
+        ratio {tuple} -- ratio of train, validation and test set
+    """
     splitfolders.ratio(input_path, output=os.path.join(input_path, 'balanced_data'),
                        seed=1337, ratio=ratio, group_prefix=None, move=False)  # default values
     print('Data has been split into train, val and test')

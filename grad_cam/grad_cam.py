@@ -17,6 +17,7 @@ class GradCAM:
             self.layerName = self.find_target_layer()
 
     def find_target_layer(self):
+        """ Automatically find the target output layer. """
         # attempt to find the final convolutional layer in the network
         # by looping over the layers of the network in reverse order
         for layer in reversed(self.model.layers):
@@ -28,6 +29,14 @@ class GradCAM:
         raise ValueError("Could not find 4D layer. Cannot apply GradCAM.")
 
     def compute_heatmap(self, image, eps=1e-8):
+        """ Compute the heatmap that is to be used
+            to overlay on the input image.
+
+            Arguments:
+                image: The image on which to apply the heatmap.
+                eps: A small value to ensure that the denominator
+                    does not become 0.
+        """
         # construct our gradient model by supplying (1) the inputs
         # to our pre-trained model, (2) the output of the (presumably)
         # final 4D layer in the network, and (3) the output of the
@@ -83,6 +92,14 @@ class GradCAM:
     @staticmethod
     def overlay_heatmap(heatmap, image, alpha=0.5,
                         colormap=cv2.COLORMAP_JET):
+        """ Overlay the heatmap onto the input image.
+
+            Arguments:
+                heatmap: The heatmap to overlay on the input image.
+                image: The image to apply the heatmap to.
+                alpha: The transparency of the heatmap.
+                colormap: The colormap to use for the heatmap.
+        """
         # apply the supplied color map to the heatmap and then
         # overlay the heatmap on the input image
         heatmap = cv2.applyColorMap(heatmap, colormap)

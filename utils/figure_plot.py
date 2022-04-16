@@ -1,9 +1,9 @@
 import os
 import random
 
-from tqdm import tqdm
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from tqdm import tqdm
 
 from grad_cam.grad_cam import GradCAM
 
@@ -11,7 +11,7 @@ from grad_cam.grad_cam import GradCAM
 def save_fig(name, path, tight_layout=False, fig_extension="png", resolution=300):
     """Save figure to filesystem.
 
-    Args:
+    Arguments:
         name (str): Name of figure.
         path (str): Root directory.
         fig_extension (str): File extension.
@@ -26,6 +26,12 @@ def save_fig(name, path, tight_layout=False, fig_extension="png", resolution=300
 
 
 def plot_train_figures(history, path):
+    """ Plot and save the comparison graphs of the training metrics.
+
+    Arguments:
+        history (keras.model): History object returned by keras model.fit.
+        path (str): Root directory.
+    """
     plt.plot(history.epoch, history.history['loss'], history.history['val_loss'])
     plt.legend(['loss', 'val_loss'])
     save_fig("loss", path)
@@ -44,11 +50,24 @@ def plot_train_figures(history, path):
 
 
 def plot_model_architecture(model, file_name, path):
+    """Plot and save the model architecture.
+
+    Arguments:
+        model (keras.model): Model object.
+        file_name (str): Name of the file.
+        path (str): Path where to save the image.
+    """
     file_path = os.path.join(path, file_name)
     tf.keras.utils.plot_model(model, to_file=file_path, show_shapes=True)
 
 
 def plot_kernels(model, path):
+    """ Extracts the kernels from the model and saves them as images.
+
+    Arguments:
+        model (keras.model): Model object.
+        path (str): Path where to save the images.
+    """
     all_filters = []
     for layer in model.layers:
         if 'conv' not in layer.name:
@@ -71,6 +90,15 @@ def plot_kernels(model, path):
 
 
 def plot_grad_cams(model, images_for_heatmap, images, path, conv_layer_name, ):
+    """ Uses the GradCAM algorithm to generate heatmaps of the images.
+
+    Arguments:
+        model (keras.model): Model object.
+        images_for_heatmap (list): List of images used to compute the heatmap.
+        images (list): List of images used as overlay.
+        path (str): Path where to save the images.
+        conv_layer_name (str): Name of the last convolutional layer.
+    """
     cam = GradCAM(model, conv_layer_name)
     heatmaps = [cam.compute_heatmap(img) for img in images_for_heatmap]
     counter = 0
@@ -82,6 +110,13 @@ def plot_grad_cams(model, images_for_heatmap, images, path, conv_layer_name, ):
 
 
 def extract_feature_maps_from_conv_layers(model, images, path):
+    """ Extracts the feature maps from the convolutional layers.
+
+    Arguments:
+        model (keras.model): Model object.
+        images (list): List of images where a random one is chosen to generate the feature maps.
+        path (str): Path where to save the images.
+    """
     img = random.choice(images)
     for layer in tqdm(model.layers):
         if 'conv' not in layer.name:
@@ -105,6 +140,13 @@ def extract_feature_maps_from_conv_layers(model, images, path):
 
 
 def plot_classified_images(img_paths, output_path, img_prefix):
+    """ Plots and saves the images with the predicted class.
+
+    Arguments:
+        img_paths (list): List of paths to the images.
+        output_path (str): Path where to save the images.
+        img_prefix (str): Prefix of the images.
+    """
     for index, img_path in enumerate(img_paths):
         img = plt.imread(img_path)
         plt.imshow(img)

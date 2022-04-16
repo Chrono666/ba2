@@ -5,10 +5,10 @@ import shutil
 import cv2
 import numpy as np
 import tensorflow as tf
-from tqdm import tqdm
 from sklearn.datasets import load_files
 from tensorflow.keras import utils
 from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from tqdm import tqdm
 
 
 def preprocess_config(rotation_range=20,
@@ -62,9 +62,9 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
                                                    batch_size=batch_size,
                                                    class_mode=class_mode)
     validation_data = ImageDataGenerator(samplewise_std_normalization=True).flow_from_directory(val_path,
-                                                                                                 target_size=target_size,
-                                                                                                 batch_size=batch_size,
-                                                                                                 class_mode=class_mode)
+                                                                                                target_size=target_size,
+                                                                                                batch_size=batch_size,
+                                                                                                class_mode=class_mode)
     test_data = ImageDataGenerator().flow_from_directory(test_path,
                                                          target_size=target_size,
                                                          batch_size=batch_size,
@@ -73,6 +73,12 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
 
 
 def load_test_set(path):
+    """
+    Load test set from a path with its paths and labels
+
+    Arguments:
+        path (str): path to the root directory of the dataset.
+    """
     data = load_files(path)
     paths = np.array(data['filenames'])
     targets = utils.to_categorical(np.array(data['target']))
@@ -80,17 +86,32 @@ def load_test_set(path):
 
 
 def path_to_tensor(img_path):
+    """ Loads an image from a path and returns it as a tensor.
+
+    Arguments:
+        img_path (str): path to the image.
+    """
     img = load_img(img_path, target_size=(224, 224))
     x = img_to_array(img)
     return np.expand_dims(x, axis=0)
 
 
 def paths_to_tensor(img_paths):
+    """ Loads a list of images from a list of paths and returns them as a stacked list of tensors.
+
+    Arguments:
+        img_paths (list): list of paths to the images.
+    """
     list_of_tensors = [path_to_tensor(img_path) for img_path in tqdm(img_paths)]
     return np.vstack(list_of_tensors)
 
 
 def get_file_list(input_path):
+    """ Returns a list of files in a directory.
+
+    Arguments:
+        input_path (str): path to the directory.
+    """
     files_list = []
     for root, dirs, files in os.walk(input_path):
         for file in files:
@@ -101,6 +122,12 @@ def get_file_list(input_path):
 
 
 def load_classify_data(input_path, image_size=(224, 224)):
+    """ Loads the data used for classification.
+
+    Arguments:
+        input_path (str): path to the directory.
+        image_size (tuple): height and width of the images after resizing.
+    """
     files_list = get_file_list(input_path)
     tensor_img_array = []
     for filename in files_list:
@@ -114,6 +141,12 @@ def load_classify_data(input_path, image_size=(224, 224)):
 
 
 def load_images_for_grad_cam(input_path, image_size=(224, 224)):
+    """ Loads the images used for Grad-CAM.
+
+    Arguments:
+        input_path (str): path to the directory.
+        image_size (tuple): height and width of the images after resizing.
+    """
     images_for_computing_heatmap = []
     images_for_overlay = []
     files_list = get_file_list(input_path)
