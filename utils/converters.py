@@ -1,9 +1,12 @@
 import glob
 import os
+import random
 
+from tqdm import tqdm
 import cv2
 import numpy as np
 import skvideo.io
+import splitfolders
 
 
 def convert_image_to_video(input_path, output_path, new_frame_width, new_frame_height, video_format='avi', frames=60,
@@ -110,3 +113,55 @@ def convert_avi_to_mp4(avi_file_path, output_name):
         "-f mp4 {output}.mp4".format(
             input=avi_file_path, output=output_name))
     return True
+
+
+def reduce_data(input_path, frame_rate):
+    """Load images from folder and deletes all images that do not fulfill i % 60 == 0 and saves them to new folder
+
+    Arguments:
+        input_path {str} -- path to images
+        frame_rate {int} -- reduce images to this frame rate
+    """
+    for root, dirs, files in os.walk(input_path):
+        for folder in dirs:
+            for i, filename in enumerate(glob.glob('{}/*.jpg'.format(os.path.join(input_path, folder)))):
+                if i % frame_rate != 0:
+                    os.remove(filename)
+    print('All frames that are not 0 when % {} have been deleted'.format(frame_rate))
+
+
+def level_out_dataset_classes(input_path):
+    ok_image_size = 0
+    def_image_size = 0
+    ok_image_files = []
+    def_image_files = []
+    ok_image_path = ''
+    def_image_path = ''
+    for root, dirs, files in os.walk(input_path):
+        for folder in dirs:
+            if folder == 'DEF':
+                def_image_path = os.path.join(root, folder)
+                def_image_size = len(os.listdir(def_image_path))
+                def_image_files = os.listdir(def_image_path)
+            if folder == 'OK':
+                ok_image_path = os.path.join(root, folder)
+                ok_image_size = len(os.listdir(ok_image_path))
+                ok_image_files = os.listdir(ok_image_path)
+        if ok_image_size > def_image_size:
+            print('OK folder has more images than DEF folder')
+            files = random.sample(ok_image_files, abs(ok_image_size - def_image_size))
+            for file in tqdm(files):
+                os.remove(os.path.join(ok_image_path, file))
+            return
+        if ok_image_size < def_image_size:
+            print('DEF folder has more images than OK folder')
+            files = random.sample(def_image_files, abs(ok_image_size - def_image_size))
+            for file in tqdm(files):
+                os.remove(os.path.join(def_image_path, file))
+            return
+
+
+def split_raw_data_into_train_val_test(input_path, ratio=(0.7, 0.15, 0.15)):
+    splitfolders.ratio(input_path, output=os.path.join(input_path, 'balanced_data'),
+                       seed=1337, ratio=ratio, group_prefix=None, move=False)  # default values
+    print('Data has been split into train, val and test')

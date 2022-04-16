@@ -5,13 +5,15 @@ import shutil
 import cv2
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tqdm import tqdm
+from sklearn.datasets import load_files
+from tensorflow.keras import utils
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 
 
 def preprocess_config(rotation_range=20,
                       width_shift_range=0.2,
                       height_shift_range=0.2,
-                      rescale=1. / 255,
                       shear_range=0.15,
                       zoom_range=0.15,
                       horizontal_flip=True,
@@ -32,7 +34,7 @@ def preprocess_config(rotation_range=20,
     return ImageDataGenerator(rotation_range=rotation_range,
                               width_shift_range=width_shift_range,
                               height_shift_range=height_shift_range,
-                              rescale=rescale,
+                              samplewise_std_normalization=True,
                               shear_range=shear_range,
                               zoom_range=zoom_range,
                               horizontal_flip=horizontal_flip,
@@ -59,15 +61,33 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
                                                    target_size=target_size,
                                                    batch_size=batch_size,
                                                    class_mode=class_mode)
-    validation_data = ImageDataGenerator(rescale=1./255).flow_from_directory(val_path,
-                                                               target_size=target_size,
-                                                               batch_size=batch_size,
-                                                               class_mode=class_mode)
-    test_data = ImageDataGenerator(rescale=1./255).flow_from_directory(test_path,
+    validation_data = ImageDataGenerator(samplewise_std_normalization=True).flow_from_directory(val_path,
+                                                                                                 target_size=target_size,
+                                                                                                 batch_size=batch_size,
+                                                                                                 class_mode=class_mode)
+    test_data = ImageDataGenerator().flow_from_directory(test_path,
                                                          target_size=target_size,
                                                          batch_size=batch_size,
                                                          class_mode=class_mode)
     return train_data, validation_data, test_data
+
+
+def load_test_set(path):
+    data = load_files(path)
+    paths = np.array(data['filenames'])
+    targets = utils.to_categorical(np.array(data['target']))
+    return paths, targets
+
+
+def path_to_tensor(img_path):
+    img = load_img(img_path, target_size=(224, 224))
+    x = img_to_array(img)
+    return np.expand_dims(x, axis=0)
+
+
+def paths_to_tensor(img_paths):
+    list_of_tensors = [path_to_tensor(img_path) for img_path in tqdm(img_paths)]
+    return np.vstack(list_of_tensors)
 
 
 def get_file_list(input_path):

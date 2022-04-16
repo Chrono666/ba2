@@ -116,9 +116,10 @@ class ReportGenerator:
         with open(os.path.join(self.html_folder_path, 'info.html'), 'w') as f:
             f.write(info_page)
 
-    def generate_results_page(self, execution_time, epochs, loss, accuracy, recall, precision, auc, f1=0):
+    def generate_results_page(self, execution_time, epochs, loss, accuracy, recall, precision, auc, date=time.asctime(time.localtime(time.time())), f1=0):
         result_page = self.results_template.render(document_title='Results',
                                                    execution_time=execution_time,
+                                                   date=date,
                                                    time_per_epoch=execution_time / epochs,
                                                    epochs=epochs,
                                                    loss=loss,
@@ -131,15 +132,16 @@ class ReportGenerator:
         with open(os.path.join(self.html_folder_path, 'results.html'), 'w') as f:
             f.write(result_page)
 
-    def generate_visual_page(self):
-        visual_page = self.visual_template.render(document_title='Visualizations')
+    def generate_visual_page(self, date=time.asctime(time.localtime(time.time()))):
+        visual_page = self.visual_template.render(document_title='Visualizations', date=date)
         with open(os.path.join(self.html_folder_path, 'visual.html'), 'w') as f:
             f.write(visual_page)
 
     def generate_test_info_page(self, model_name, dataset_name, dataset_size, classified_image_size, true_positives,
-                                false_positives, false_negatives, true_negatives):
+                                false_positives, false_negatives, true_negatives, date=time.asctime(time.localtime(time.time()))):
         test_info_page = self.test_info_template.render(document_title='Overall Information',
                                                         model_name=model_name,
+                                                        date=date,
                                                         dataset_name=dataset_name,
                                                         dataset_size=dataset_size,
                                                         classified_image_size=classified_image_size,
@@ -151,12 +153,12 @@ class ReportGenerator:
         with open(os.path.join(self.html_folder_path, 'info.html'), 'w') as f:
             f.write(test_info_page)
 
-    def generate_grad_cam_page(self):
-        cam_page = self.grad_cam_template.render(document_title='Grad Cam Images')
+    def generate_grad_cam_page(self, date=time.asctime(time.localtime(time.time()))):
+        cam_page = self.grad_cam_template.render(document_title='Grad Cam Images', date=date)
         with open(os.path.join(self.html_folder_path, 'grad-cam.html'), 'w') as f:
             f.write(cam_page)
 
-    def generate_feature_map_page(self):
-        map_page = self.feature_map_template.render(document_title='Feature Maps')
+    def generate_feature_map_page(self, date=time.asctime(time.localtime(time.time()))):
+        map_page = self.feature_map_template.render(document_title='Feature Maps', date=date)
         with open(os.path.join(self.html_folder_path, 'feature-map.html'), 'w') as f:
             f.write(map_page)

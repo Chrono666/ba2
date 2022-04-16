@@ -24,10 +24,12 @@ if __name__ == '__main__':
 
     model, metadata = load_model_with_metadata(args.model_dir)
 
-    images_for_prediction, _ = load_classify_data(args.data_dir)
+    images_for_prediction, file_list = load_classify_data(args.data_dir)
     images_for_heat_map, images = load_images_for_grad_cam(args.data_dir)
 
-    true_positives, true_negatives, false_positives, false_negatives = get_predictions_from_model(model, args.data_dir)
+    true_positives, true_negatives, false_positives, false_negatives = get_predictions_from_model(model,
+                                                                                                  images_for_prediction,
+                                                                                                  file_list)
 
     true_positives_paths = [el[1] for el in true_positives if len(true_positives) > 0]
     true_negatives_paths = [el[1] for el in true_negatives if len(true_negatives) > 0]
@@ -39,7 +41,7 @@ if __name__ == '__main__':
     try:
         report_generator.save_model_architecture(model)
     except ImportError:
-         print("Could not save model architecture. Make sure graphviz is installed.")
+        print("Could not save model architecture. Make sure graphviz is installed.")
 
     try:
         report_generator.save_grad_cam_img(model=model, images_of_heatmap=images_for_heat_map, images=images)
@@ -52,7 +54,7 @@ if __name__ == '__main__':
     report_generator.save_classified_images(true_positives_paths, img_prefix='true_positives')
 
     report_generator.generate_test_info_page(model_name=metadata['model_name'], dataset_name=metadata['dataset_name'],
-                                             dataset_size=len(metadata['dataset_size']),
+                                             dataset_size=metadata['dataset_size'][0],
                                              classified_image_size=len(images_for_prediction),
                                              true_positives=len(true_positives_paths),
                                              true_negatives=len(true_negatives_paths),

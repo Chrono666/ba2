@@ -1,9 +1,11 @@
 import argparse
+import os.path
 import time
 from datetime import datetime, timedelta
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.applications.vgg16 import preprocess_input
 
 import model.dataset as dataset
 from model.custom_model import \
@@ -81,6 +83,7 @@ if __name__ == '__main__':
                                                            configuration=preprocess_config)
 
     dataset_size = train_data.samples + val_data.samples + test_data.samples
+    print(dataset_size)
 
     dataset_name = args.data_dir.split('/')[-3] if args.data_dir.split('/')[-2] == 'balanced_data' else \
         args.data_dir.split('/')[-2]
@@ -145,9 +148,23 @@ if __name__ == '__main__':
 
     report_generator.generate_visual_page()
 
+    print('-' * 80)
+    print('Evaluation with custom load function')
+    test_files, test_targets = dataset.load_test_set(os.path.join(args.data_dir, 'test'))
+    test_tensors = preprocess_input(dataset.paths_to_tensor(test_files))
+    print('\nTesting loss: {:.4f}\nTesting accuracy: {:.4f}\nTesting Recall: {:.4f}\n Testing precision {:.4f}'.format(
+        *model.evaluate(test_tensors, test_targets)))
+    print('-' * 80)
     print('\n')
     print('-' * 80)
     print('Model trained successfully!')
     print('Total time: {}'.format(total_time))
+
+    print(f"loss: {loss}, \n"
+          f"accuracy: {accuracy}, \n"
+          f"recall: {recall}, \n"
+          f"precision: {precision}, \n"
+          f"auc: {auc}, \n"
+          f"F1: {f1}")
     print('Report was generated and can be found in the target folder.')
     print('\n')

@@ -1,6 +1,7 @@
 import os
 import random
 
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
@@ -73,7 +74,7 @@ def plot_grad_cams(model, images_for_heatmap, images, path, conv_layer_name, ):
     cam = GradCAM(model, conv_layer_name)
     heatmaps = [cam.compute_heatmap(img) for img in images_for_heatmap]
     counter = 0
-    for a, i in zip(heatmaps, images):
+    for a, i in tqdm(zip(heatmaps, images)):
         test, output = GradCAM.overlay_heatmap(heatmap=a, image=i, alpha=0.5)
         plt.imshow(output)
         save_fig(('grad_cam' + str(counter)), path)
@@ -82,7 +83,7 @@ def plot_grad_cams(model, images_for_heatmap, images, path, conv_layer_name, ):
 
 def extract_feature_maps_from_conv_layers(model, images, path):
     img = random.choice(images)
-    for layer in model.layers:
+    for layer in tqdm(model.layers):
         if 'conv' not in layer.name:
             continue
         else:

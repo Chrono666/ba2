@@ -2,11 +2,11 @@ import glob
 import os
 
 import h5py
+from pathlib import PurePath
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.python.keras.saving import hdf5_format
-
-from model.dataset import load_classify_data
+from tqdm import tqdm
 
 
 def build_model(input_shape=(224, 224, 3), dropout_rate=0.25, output_activation='sigmoid'):
@@ -81,24 +81,24 @@ def load_model_with_metadata(file_path):
     return model, metadata
 
 
-def get_predictions_from_model(model, input_path):
+def get_predictions_from_model(model, img_arr, file_list):
     true_positives = []
     true_negatives = []
     false_positive = []
     false_negative = []
-    img_arr, file_list = load_classify_data(input_path)
-    for img, file in zip(img_arr, file_list):
+    for img, file in tqdm(zip(img_arr, file_list)):
         prediction = model.predict(img)
-        if prediction[0] == 0 and file.rsplit('\\', 2)[1] == 'DEF':
+        path_parts = PurePath(file).parts
+        if prediction[0] == 0 and path_parts[-2] == 'DEF':
             true_negatives.append((prediction, file))
-            # print('{} was classified correctly as DEF'.format(file.rsplit('\\', 1)[-1]))
-        elif prediction[0] == 0 and file.rsplit('\\', 2)[1] == 'OK':
+            # print('{} was classified correctly as DEF'.format(path_parts[-2]))
+        elif prediction[0] == 0 and path_parts[-2] == 'OK':
             false_negative.append((prediction, file))
-            # print('{} was classified incorrectly as OK'.format(file.rsplit('\\', 1)[-1]))
-        elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'OK':
+            # print('{} was classified incorrectly as OK'.format(path_parts[-2]))
+        elif prediction[0] == 1 and path_parts[-2] == 'OK':
             true_positives.append((prediction, file))
-            # print('{} was classified correctly as OK'.format(file.rsplit('\\', 1)[-1]))
-        elif prediction[0] == 1 and file.rsplit('\\', 2)[1] == 'DEF':
+            # print('{} was classified correctly as OK'.format(path_parts[-2]))
+        elif prediction[0] == 1 and path_parts[-2] == 'DEF':
             false_positive.append((prediction, file))
-            # print('{} was classified incorrectly as DEF'.format(file.rsplit('\\', 1)[-1]))
+            # print('{} was classified incorrectly as DEF'.format(path_parts[-2]))
     return true_positives, true_negatives, false_positive, false_negative
