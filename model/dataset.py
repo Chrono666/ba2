@@ -34,7 +34,7 @@ def preprocess_config(rotation_range=20,
     return ImageDataGenerator(rotation_range=rotation_range,
                               width_shift_range=width_shift_range,
                               height_shift_range=height_shift_range,
-                              samplewise_std_normalization=True,
+                              rescale=1. / 255,
                               shear_range=shear_range,
                               zoom_range=zoom_range,
                               horizontal_flip=horizontal_flip,
@@ -61,10 +61,10 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
                                                    target_size=target_size,
                                                    batch_size=batch_size,
                                                    class_mode=class_mode)
-    validation_data = ImageDataGenerator(samplewise_std_normalization=True).flow_from_directory(val_path,
-                                                                                                target_size=target_size,
-                                                                                                batch_size=batch_size,
-                                                                                                class_mode=class_mode)
+    validation_data = ImageDataGenerator(rescale=1. / 255).flow_from_directory(val_path,
+                                                                               target_size=target_size,
+                                                                               batch_size=batch_size,
+                                                                               class_mode=class_mode)
     test_data = ImageDataGenerator().flow_from_directory(test_path,
                                                          target_size=target_size,
                                                          batch_size=batch_size,

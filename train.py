@@ -149,12 +149,6 @@ if __name__ == '__main__':
     report_generator.generate_visual_page()
 
     print('-' * 80)
-    print('Evaluation with custom load function')
-    test_files, test_targets = dataset.load_test_set(os.path.join(args.data_dir, 'test'))
-    test_tensors = preprocess_input(dataset.paths_to_tensor(test_files))
-    print('\nTesting loss: {:.4f}\nTesting accuracy: {:.4f}\nTesting Recall: {:.4f}\n Testing precision {:.4f}'.format(
-        *model.evaluate(test_tensors, test_targets)))
-    print('-' * 80)
     print('\n')
     print('-' * 80)
     print('Model trained successfully!')
