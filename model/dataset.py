@@ -140,24 +140,41 @@ def load_classify_data(input_path, image_size=(224, 224)):
     return tensor_img_array, files_list
 
 
-def load_images_for_grad_cam(input_path, image_size=(224, 224)):
+def load_images_for_grad_cam(files, image_size=(224, 224)):
     """ Loads the images used for Grad-CAM.
 
     Arguments:
-        input_path (str): path to the directory.
+        files (list): path to the directory.
         image_size (tuple): height and width of the images after resizing.
     """
     images_for_computing_heatmap = []
     images_for_overlay = []
-    files_list = get_file_list(input_path)
-    for filename in files_list:
-        img = cv2.imread(filename)
+    for file in files:
+        img = cv2.imread(file)
         img = cv2.resize(img, image_size)
         images_for_overlay.append(img)
         img = img.astype('float32') / 255
         img = np.expand_dims(img, axis=0)
         images_for_computing_heatmap.append(img)
     return images_for_computing_heatmap, [cv2.cvtColor(img, cv2.COLOR_BGR2RGB) for img in images_for_overlay]
+
+
+def load_img_for_feature_maps(input_path, image_size=(224, 224)):
+    """ Loads the images used for feature map extraction
+
+    Arguments:
+        input_path (str): path to the directory.
+        image_size (tuple): height and width of the images after resizing.
+    """
+    images_for_fm = []
+    files_list = get_file_list(input_path)
+    for file in files_list:
+        img = cv2.imread(file)
+        img = cv2.resize(img, image_size)
+        img = img.astype('float32') / 255
+        img = np.expand_dims(img, axis=0)
+        images_for_fm.append(img)
+    return images_for_fm
 
 
 def save_example_images(input_path, output_path, number_of_images=12):

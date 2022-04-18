@@ -6,6 +6,7 @@ import tensorflow as tf
 from tqdm import tqdm
 
 from grad_cam.grad_cam import GradCAM
+from model.dataset import load_images_for_grad_cam
 
 
 def save_fig(name, path, tight_layout=False, fig_extension="png", resolution=300):
@@ -89,20 +90,20 @@ def plot_kernels(model, path):
             save_fig(('kernel' + str(ix - 1)), path)
 
 
-def plot_grad_cams(model, images_for_heatmap, images, path, conv_layer_name, ):
+def plot_grad_cams(model, file_list, path, conv_layer_name, ):
     """ Uses the GradCAM algorithm to generate heatmaps of the images.
 
     Arguments:
         model (keras.model): Model object.
-        images_for_heatmap (list): List of images used to compute the heatmap.
-        images (list): List of images used as overlay.
         path (str): Path where to save the images.
+        file_list (list): List of image paths.
         conv_layer_name (str): Name of the last convolutional layer.
     """
+    img_to_compute_hm, images_for_hm_overlay = load_images_for_grad_cam(file_list)
     cam = GradCAM(model, conv_layer_name)
-    heatmaps = [cam.compute_heatmap(img) for img in images_for_heatmap]
+    heatmaps = [cam.compute_heatmap(img) for img in img_to_compute_hm]
     counter = 0
-    for a, i in tqdm(zip(heatmaps, images)):
+    for a, i in tqdm(zip(heatmaps, images_for_hm_overlay)):
         test, output = GradCAM.overlay_heatmap(heatmap=a, image=i, alpha=0.5)
         plt.imshow(output)
         save_fig(('grad_cam' + str(counter)), path)

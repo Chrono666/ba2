@@ -74,13 +74,13 @@
             margin: 0 auto;
         }
 
-        #image-grid {
+        .image-grid {
             display: grid;
-            grid-template-columns: repeat(3, 25rem);
+            grid-template-columns: repeat(5, 25rem);
             justify-content: center;
         }
 
-        #image-grid img {
+        .image-grid img {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -113,23 +113,49 @@
             <p>All Images can be found in the images' folder of the report</p>
             <ul uk-accordion>
                 <li>
-                    <a class="uk-accordion-title" href="#">Examples of the generated Grad Cam Images</a>
-                    <div id='image-grid' style="text-align: center" class="uk-accordion-content">
-                        <img src="../images/grad_cams/grad_cam0.png">
-                        <img src="../images/grad_cams/grad_cam1.png">
-                        <img src="../images/grad_cams/grad_cam2.png">
-                        <img src="../images/grad_cams/grad_cam3.png">
-                        <img src="../images/grad_cams/grad_cam4.png">
-                        <img src="../images/grad_cams/grad_cam5.png">
-                        <img src="../images/grad_cams/grad_cam6.png">
-                        <img src="../images/grad_cams/grad_cam7.png">
-                        <img src="../images/grad_cams/grad_cam8.png">
-                        <img src="../images/grad_cams/grad_cam9.png">
-                        <img src="../images/grad_cams/grad_cam10.png">
-                        <img src="../images/grad_cams/grad_cam11.png">
-                        <img src="../images/grad_cams/grad_cam12.png">
-                        <img src="../images/grad_cams/grad_cam13.png">
-                        <img src="../images/grad_cams/grad_cam14.png">
+                    <a class="uk-accordion-title" href="#">Examples of the generated Grad Cam Images of TRUE POSITIVES</a>
+                    <div style="text-align: center" class="image-grid uk-accordion-content">
+                        <img src="../images/true_positives/grad_cams/grad_cam0.png">
+                        <img src="../images/true_positives/grad_cams/grad_cam1.png">
+                        <img src="../images/true_positives/grad_cams/grad_cam2.png">
+                        <img src="../images/true_positives/grad_cams/grad_cam3.png">
+                        <img src="../images/true_positives/grad_cams/grad_cam4.png">
+                    </div>
+                </li>
+            </ul>
+            <ul uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" href="#">Examples of the generated Grad Cam Images of TRUE NEGATIVES</a>
+                    <div style="text-align: center" class="image-grid uk-accordion-content">
+                        <img src="../images/true_negatives/grad_cams/grad_cam0.png">
+                        <img src="../images/true_negatives/grad_cams/grad_cam1.png">
+                        <img src="../images/true_negatives/grad_cams/grad_cam2.png">
+                        <img src="../images/true_negatives/grad_cams/grad_cam3.png">
+                        <img src="../images/true_negatives/grad_cams/grad_cam4.png">
+                    </div>
+                </li>
+            </ul>
+            <ul uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" href="#">Examples of the generated Grad Cam Images of FALSE POSITIVES</a>
+                    <div style="text-align: center" class="image-grid uk-accordion-content">
+                        <img src="../images/false_positives/grad_cams/grad_cam0.png">
+                        <img src="../images/false_positives/grad_cams/grad_cam1.png">
+                        <img src="../images/false_positives/grad_cams/grad_cam2.png">
+                        <img src="../images/false_positives/grad_cams/grad_cam3.png">
+                        <img src="../images/false_positives/grad_cams/grad_cam4.png">
+                    </div>
+                </li>
+            </ul>
+            <ul uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" href="#">Examples of the generated Grad Cam Images of FALSE NEGATIVES</a>
+                    <div style="text-align: center" class="image-grid uk-accordion-content">
+                        <img src="../images/false_negatives/grad_cams/grad_cam0.png">
+                        <img src="../images/false_negatives/grad_cams/grad_cam1.png">
+                        <img src="../images/false_negatives/grad_cams/grad_cam2.png">
+                        <img src="../images/false_negatives/grad_cams/grad_cam3.png">
+                        <img src="../images/false_negatives/grad_cams/grad_cam4.png">
                     </div>
                 </li>
             </ul>

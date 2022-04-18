@@ -29,12 +29,15 @@ class ReportGenerator:
             self.example_img_path = os.path.join(self.image_folder_path, 'examples')
             self.kernel_img_path = os.path.join(self.image_folder_path, 'kernels')
         if self.report_type == 'test':
-            self.grad_cam_img_path = os.path.join(self.image_folder_path, 'grad_cams')
             self.feature_map_img_path = os.path.join(self.image_folder_path, 'feature_maps')
             self.false_positive_path = os.path.join(self.image_folder_path, 'false_positives')
+            self.fp_grad_cam_img_path = os.path.join(self.false_positive_path, 'grad_cams')
             self.false_negative_path = os.path.join(self.image_folder_path, 'false_negatives')
+            self.fn_grad_cam_img_path = os.path.join(self.false_negative_path, 'grad_cams')
             self.true_positive_path = os.path.join(self.image_folder_path, 'true_positives')
+            self.tp_grad_cam_img_path = os.path.join(self.true_positive_path, 'grad_cams')
             self.true_negative_path = os.path.join(self.image_folder_path, 'true_negatives')
+            self.tn_grad_cam_img_path = os.path.join(self.true_negative_path, 'grad_cams')
         self.__initialize_templates()
 
     def __initialize_templates(self):
@@ -59,12 +62,15 @@ class ReportGenerator:
             os.mkdir(self.example_img_path)
             os.mkdir(self.kernel_img_path)
         if self.report_type == 'test':
-            os.mkdir(self.grad_cam_img_path)
             os.mkdir(self.feature_map_img_path)
             os.mkdir(self.false_positive_path)
             os.mkdir(self.false_negative_path)
             os.mkdir(self.true_positive_path)
             os.mkdir(self.true_negative_path)
+            os.mkdir(self.fp_grad_cam_img_path)
+            os.mkdir(self.fn_grad_cam_img_path)
+            os.mkdir(self.tp_grad_cam_img_path)
+            os.mkdir(self.tn_grad_cam_img_path)
         os.mkdir(self.html_folder_path)
 
     @staticmethod
@@ -104,17 +110,27 @@ class ReportGenerator:
         """
         plot_model_architecture(model=model, path=self.image_folder_path, file_name='model_architecture.png')
 
-    def save_grad_cam_img(self, model, images_of_heatmap, images, conv_layer_name='block5_conv3'):
+    def save_grad_cam_img(self, model, image_type,  file_list, conv_layer_name='block5_conv3'):
         """ Save the grad cam images in the folder.
 
         Arguments:
             model (keras model): The model to be used for the grad cam.
-            images_of_heatmap (list): The images used to compute the heatmap.
-            images (list): The images used as overlay.
+            image_type (str): The type of the images (false positives, etc.).
+            file_list (list): The list of the images to be used for the grad cam.
             conv_layer_name (str): The name of the last convolutional layer.
         """
-        plot_grad_cams(model=model, path=self.grad_cam_img_path, images_for_heatmap=images_of_heatmap, images=images,
-                       conv_layer_name=conv_layer_name)
+        if image_type == 'fp':
+            path = self.fp_grad_cam_img_path
+        elif image_type == 'fn':
+            path = self.fn_grad_cam_img_path
+        elif image_type == 'tp':
+            path = self.tp_grad_cam_img_path
+        elif image_type == 'tn':
+            path = self.tn_grad_cam_img_path
+        else:
+            raise ValueError('The image type is not valid.')
+
+        plot_grad_cams(model=model, path=path, file_list=file_list, conv_layer_name=conv_layer_name)
 
     def save_feature_maps(self, model, images):
         """ Save the feature maps in the folder.

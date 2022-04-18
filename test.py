@@ -1,7 +1,7 @@
 import argparse
 
 from model.custom_model import load_model_with_metadata, get_predictions_from_model
-from model.dataset import load_classify_data, load_images_for_grad_cam
+from model.dataset import load_classify_data, load_img_for_feature_maps
 from report_builder.report_generator import ReportGenerator
 
 parser = argparse.ArgumentParser(description='train')
@@ -25,7 +25,6 @@ if __name__ == '__main__':
     model, metadata = load_model_with_metadata(args.model_dir)
 
     images_for_prediction, file_list = load_classify_data(args.data_dir)
-    images_for_heat_map, images = load_images_for_grad_cam(args.data_dir)
 
     true_positives, true_negatives, false_positives, false_negatives = get_predictions_from_model(model,
                                                                                                   images_for_prediction,
@@ -43,11 +42,17 @@ if __name__ == '__main__':
     except ImportError:
         print("Could not save model architecture. Make sure graphviz is installed.")
 
+
     try:
-        report_generator.save_grad_cam_img(model=model, images_of_heatmap=images_for_heat_map, images=images)
+        report_generator.save_grad_cam_img(model=model, image_type='tp',   file_list=true_positives_paths)
+        report_generator.save_grad_cam_img(model=model, image_type='tn', file_list=true_negatives_paths)
+        report_generator.save_grad_cam_img(model=model, image_type='fp', file_list=false_positives_paths)
+        report_generator.save_grad_cam_img(model=model, image_type='fn', file_list=false_negatives_paths)
     except:
         print("Something went wrong while saving grad cam images.")
-    report_generator.save_feature_maps(model=model, images=images_for_heat_map)
+
+    img_for_fm = load_img_for_feature_maps(args.data_dir)
+    report_generator.save_feature_maps(model=model, images=img_for_fm)
     report_generator.save_classified_images(false_negatives_paths, img_prefix='false_negatives')
     report_generator.save_classified_images(false_positives_paths, img_prefix='false_positives')
     report_generator.save_classified_images(true_negatives_paths, img_prefix='true_negatives')
