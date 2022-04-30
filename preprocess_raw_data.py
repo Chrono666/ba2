@@ -31,7 +31,7 @@ parser.add_argument(
     metavar='RF',
     help='if duplicates should be removed (default: False)')
 parser.add_argument(
-    '--level-out',
+    '--downsample',
     default=False,
     type=bool,
     metavar='LO',
@@ -60,7 +60,7 @@ if __name__ == '__main__':
             for folder in dirs:
                 remove_duplicates(os.path.join(root, folder))
 
-    if args.level_out:
+    if args.downsample:
         level_out_dataset_classes(args.data_dir)
 
     if args.split_folders:

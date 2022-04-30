@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     report_generator.generate_info_page(date=time.asctime(time.localtime(time.time())),
                                         learning_rate=args.learning_rate, beta_1=args.beta_1, beta_2=args.beta_2,
-                                        split_ratio='0.7-0.15-0.15', dataset_name=dataset_name,
+                                        split_ratio='(0.8, 0.1, 0.1)', dataset_name=dataset_name,
                                         dataset_size=str(dataset_size), train_data_size=str(train_data.samples),
                                         val_data_size=str(val_data.samples), test_data_size=str(test_data.samples),
                                         epochs=args.epochs, batch_size=args.batch_size,

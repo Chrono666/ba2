@@ -176,3 +176,25 @@ def split_raw_data_into_train_val_test(input_path, ratio=(0.7, 0.15, 0.15)):
     splitfolders.ratio(input_path, output=os.path.join(input_path, 'balanced_data'),
                        seed=1337, ratio=ratio, group_prefix=None, move=False)  # default values
     print('Data has been split into train, val and test')
+
+
+def generate_image_patches(input_path, output_path, coordinates, patch_name):
+    """Generate image patches from images in input_path and save them in output_path.
+
+    Arguments:
+        input_path {str} -- path to images
+        output_path {str} -- path to save patches
+        coordinates {list} -- list of coordinates of patch
+        patch_name {str} -- name of patch
+    """
+    if not os.path.isdir(output_path):
+        os.mkdir(output_path)
+        os.mkdir(os.path.join(output_path, 'OK'))
+        os.mkdir(os.path.join(output_path, 'DEF'))
+    for root, dirs, files in os.walk(input_path):
+        for folder in dirs:
+            for filename in tqdm(glob.glob('{}/*.jpg'.format(os.path.join(input_path, folder)))):
+                img = cv2.imread(filename)
+                img = img[coordinates[0]:coordinates[1], coordinates[2]:coordinates[3]]
+                cv2.imwrite(os.path.join(output_path, folder, patch_name + '_' + os.path.basename(filename)), img)
+    print(f'All images have been converted to patches')
