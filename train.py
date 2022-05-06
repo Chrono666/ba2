@@ -1,11 +1,10 @@
 import argparse
-import os.path
 import time
 from datetime import datetime, timedelta
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.applications.vgg16 import preprocess_input
+
 
 import model.dataset as dataset
 from model.custom_model import \
@@ -75,6 +74,11 @@ parser.add_argument(
 args = parser.parse_args()
 
 if __name__ == '__main__':
+
+    # get available devices and set memory growth
+    physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+
     # load data
     preprocess_config = dataset.preprocess_config()
 
@@ -123,7 +127,10 @@ if __name__ == '__main__':
                     dataset_size=dataset_size, train_data_size=train_data.samples, val_data_size=val_data.samples,
                     test_data_size=test_data.samples)
 
-    f1 = 2 * ((precision * recall) / (precision + recall))
+    try:
+        f1 = 2 * ((precision * recall) / (precision + recall))
+    except ZeroDivisionError:
+        print('precision or recall is zero')
 
     try:
         report_generator.save_model_architecture(model)

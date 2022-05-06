@@ -1,5 +1,6 @@
 import argparse
 
+import tensorflow as tf
 from model.custom_model import load_model_with_metadata, get_predictions_from_model
 from model.dataset import load_classify_data, load_img_for_feature_maps
 from report_builder.report_generator import ReportGenerator
@@ -19,6 +20,10 @@ parser.add_argument(
 args = parser.parse_args()
 
 if __name__ == '__main__':
+    # get available devices and set memory growth
+    physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+
     # initialize the trainings report_builder
     report_generator = ReportGenerator('test', 'report_builder/templates', './')
 
@@ -42,9 +47,8 @@ if __name__ == '__main__':
     except ImportError:
         print("Could not save model architecture. Make sure graphviz is installed.")
 
-
     try:
-        report_generator.save_grad_cam_img(model=model, image_type='tp',   file_list=true_positives_paths)
+        report_generator.save_grad_cam_img(model=model, image_type='tp', file_list=true_positives_paths)
         report_generator.save_grad_cam_img(model=model, image_type='tn', file_list=true_negatives_paths)
         report_generator.save_grad_cam_img(model=model, image_type='fp', file_list=false_positives_paths)
         report_generator.save_grad_cam_img(model=model, image_type='fn', file_list=false_negatives_paths)
