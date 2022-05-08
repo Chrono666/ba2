@@ -44,14 +44,43 @@ def compile_model(model, alpha, beta1, beta2, metrics):
     return model
 
 
-def set_layers_trainable(model, set_trainable):
+def set_layers_trainable(model, set_trainable, layer_number):
     """ Sets the trainable property of all layers in the model.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to modify.
+        set_trainable {bool} -- Whether the layers should be trainable.
+        layer_number {int} -- Number of layers to be frozen.
+    """
+    for index, layer in enumerate(model.layers):
+        layer.trainable = set_trainable
+        if index == layer_number:
+            break
+
+
+def set_base_model_layers_trainable(model, set_trainable):
+    """ Sets the trainable property of all layers in the BASE model.
 
     Arguments:
         model {tf.keras.Model} -- The model to modify.
         set_trainable {bool} -- Whether the layers should be trainable.
     """
     for layer in model.layers:
+        if layer.name == 'flatten':
+            break
+        layer.trainable = set_trainable
+
+
+def set_conv_layers_trainable(model, set_trainable, conv_layer_number):
+    """ Sets the trainable property of conv layers in the model.
+
+    Arguments:
+        model {tf.keras.Model} -- The model to modify.
+        set_trainable {bool} -- Whether the layers should be trainable.
+        conv_layer_number {int} -- Number of conv layers to be set.
+    """
+    conv_layers = [layer for layer in model.layers if 'conv' in layer.name]
+    for layer in conv_layers[:conv_layer_number]:
         layer.trainable = set_trainable
 
 

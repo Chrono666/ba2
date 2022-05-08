@@ -8,7 +8,7 @@ import tensorflow as tf
 
 import model.dataset as dataset
 from model.custom_model import \
-    build_model, save_model_data, train_model, compile_model, set_layers_trainable
+    build_model, save_model_data, train_model, compile_model, set_layers_trainable, set_base_model_layers_trainable
 from report_builder.report_generator import ReportGenerator
 
 # use random seed to reproduce results
@@ -70,6 +70,12 @@ parser.add_argument(
     default='data',
     metavar='DD',
     help='data dir')
+parser.add_argument(
+    '--freeze',
+    type=int,
+    default=0,
+    metavar='',
+    help='number of layers to freeze')
 
 args = parser.parse_args()
 
@@ -103,9 +109,9 @@ if __name__ == '__main__':
     time_of_start = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
     train_start = time.time()
-    set_layers_trainable(model, False)
+    set_base_model_layers_trainable(model, False)
     history = train_model(model, train_data, val_data, epochs=args.pre_epochs)
-    set_layers_trainable(model, True)
+    set_base_model_layers_trainable(model, True)
 
     # callbacks
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=args.early_stopping)

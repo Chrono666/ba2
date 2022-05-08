@@ -5,6 +5,8 @@
       <excludeFolder url="file://$MODULE_DIR$/data" />
       <excludeFolder url="file://$MODULE_DIR$/saved_models" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/data_storage" />
+      <excludeFolder url="file://$MODULE_DIR$/data_for_classification" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9 (ba2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
