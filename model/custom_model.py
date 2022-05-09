@@ -69,6 +69,8 @@ def set_base_model_layers_trainable(model, set_trainable):
         if layer.name == 'flatten':
             break
         layer.trainable = set_trainable
+    for layer in model.layers:
+        print(layer.name, layer.trainable)
 
 
 def set_conv_layers_trainable(model, set_trainable, conv_layer_number):
@@ -82,6 +84,9 @@ def set_conv_layers_trainable(model, set_trainable, conv_layer_number):
     conv_layers = [layer for layer in model.layers if 'conv' in layer.name]
     for layer in conv_layers[:conv_layer_number]:
         layer.trainable = set_trainable
+    for layer in model.layers:
+        print(layer.name, layer.trainable)
+    print('Frozen layers: ' + str(len(conv_layers[:conv_layer_number])) + '/' + str(len(conv_layers)))
 
 
 def train_model(model, train_data, validation_data, epochs, callbacks=[]):

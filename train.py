@@ -8,7 +8,7 @@ import tensorflow as tf
 
 import model.dataset as dataset
 from model.custom_model import \
-    build_model, save_model_data, train_model, compile_model, set_layers_trainable, set_base_model_layers_trainable
+    build_model, save_model_data, train_model, compile_model, set_layers_trainable, set_base_model_layers_trainable, set_conv_layers_trainable
 from report_builder.report_generator import ReportGenerator
 
 # use random seed to reproduce results
@@ -110,8 +110,12 @@ if __name__ == '__main__':
 
     train_start = time.time()
     set_base_model_layers_trainable(model, False)
+    print(model.summary())
     history = train_model(model, train_data, val_data, epochs=args.pre_epochs)
-    set_base_model_layers_trainable(model, True)
+    # vgg has 12 conv layers
+    set_conv_layers_trainable(model, True, -9)
+    # set_base_model_layers_trainable(model, True)
+    print(model.summary())
 
     # callbacks
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=args.early_stopping)
