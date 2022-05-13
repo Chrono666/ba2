@@ -82,11 +82,11 @@ def set_conv_layers_trainable(model, set_trainable, conv_layer_number):
         conv_layer_number {int} -- Number of conv layers to be set.
     """
     conv_layers = [layer for layer in model.layers if 'conv' in layer.name]
-    for layer in conv_layers[:conv_layer_number]:
+    for layer in conv_layers[conv_layer_number:]:
         layer.trainable = set_trainable
     for layer in model.layers:
         print(layer.name, layer.trainable)
-    print('Frozen layers: ' + str(len(conv_layers[:conv_layer_number])) + '/' + str(len(conv_layers)))
+    print('Trainable layers: ' + str(len(conv_layers[conv_layer_number:])) + '/' + str(len(conv_layers)))
 
 
 def train_model(model, train_data, validation_data, epochs, callbacks=[]):

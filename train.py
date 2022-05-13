@@ -82,8 +82,8 @@ args = parser.parse_args()
 if __name__ == '__main__':
 
     # get available devices and set memory growth
-    physical_devices = tf.config.experimental.list_physical_devices('GPU')
-    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+    # physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    # tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
     # load data
     preprocess_config = dataset.preprocess_config()
@@ -113,8 +113,7 @@ if __name__ == '__main__':
     print(model.summary())
     history = train_model(model, train_data, val_data, epochs=args.pre_epochs)
     # vgg has 12 conv layers
-    set_conv_layers_trainable(model, True, -9)
-    # set_base_model_layers_trainable(model, True)
+    set_conv_layers_trainable(model, True, args.freeze)
     print(model.summary())
 
     # callbacks
