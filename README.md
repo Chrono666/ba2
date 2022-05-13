@@ -5,7 +5,8 @@
 * [General information](#general-information)
 * [Project information](#project-information)
 * [Setup](#setup)
-* [Notebook description](#notebook-description)
+* [How to use the train script to train a VGG16 model](#How-to-use-the-train-script-to-train-a-VGG16-model)
+* [How to use the test script to classify images with a trained VGG16 model](#How-to-use-the-test-script-to-classify-images-with-a-trained-VGG16-model)
 
 ## General information
 
