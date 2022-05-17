@@ -131,9 +131,36 @@
             </table>
         </div>
     </section>
+    <section id="results">
+        <div class="table">
+            <h2>Evaluation Results</h2>
+            <table class="uk-table uk-table-striped">
+                <thead>
+                <tr>
+                    <th>Loss:</th>
+                    <th>Accuracy:</th>
+                    <th>Recall:</th>
+                    <th>Precision:</th>
+                    <th>AUC:</th>
+                    <th>F1:</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{loss}}</td>
+                    <td>{{accuracy}}</td>
+                    <td>{{recall}}</td>
+                    <td>{{precision}}</td>
+                    <td>{{auc}}</td>
+                    <td>{{f1}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
     <section id="parameters">
         <div class="table">
-            <h2>Parameters</h2>
+            <h2>Classification Results</h2>
             <table class="uk-table uk-table-striped">
                 <thead>
                 <tr>

@@ -110,7 +110,7 @@ class ReportGenerator:
         """
         plot_model_architecture(model=model, path=self.image_folder_path, file_name='model_architecture.png')
 
-    def save_grad_cam_img(self, model, image_type,  file_list, conv_layer_name='block5_conv3'):
+    def save_grad_cam_img(self, model, image_type, file_list, conv_layer_name='block5_conv3'):
         """ Save the grad cam images in the folder.
 
         Arguments:
@@ -242,8 +242,8 @@ class ReportGenerator:
             f.write(visual_page)
 
     def generate_test_info_page(self, model_name, dataset_name, dataset_size, classified_image_size, true_positives,
-                                false_positives, false_negatives, true_negatives,
-                                date=time.asctime(time.localtime(time.time()))):
+                                false_positives, false_negatives, true_negatives, loss, accuracy, recall, precision,
+                                auc, f1, date=time.asctime(time.localtime(time.time()))):
         """ Generates the info page of the test report.
 
         Arguments:
@@ -256,6 +256,12 @@ class ReportGenerator:
             false_negatives (int): The number of false negatives.
             true_negatives (int): The number of true negatives.
             date (str): The date the classification was done.
+            loss (float): The loss of the model.
+            accuracy (float): The accuracy of the model.
+            recall (float): The recall of the model.
+            precision (float): The precision of the model.
+            auc (float): The auc of the model.
+            f1 (float): The f1 of the model.
         """
         test_info_page = self.test_info_template.render(document_title='Overall Information',
                                                         model_name=model_name,
@@ -266,7 +272,13 @@ class ReportGenerator:
                                                         true_positives=true_positives,
                                                         false_positives=false_positives,
                                                         false_negatives=false_negatives,
-                                                        true_negatives=true_negatives
+                                                        true_negatives=true_negatives,
+                                                        loss=loss,
+                                                        accuracy=accuracy,
+                                                        recall=recall,
+                                                        precision=precision,
+                                                        auc=auc,
+                                                        f1=f1
                                                         )
         with open(os.path.join(self.html_folder_path, 'info.html'), 'w') as f:
             f.write(test_info_page)

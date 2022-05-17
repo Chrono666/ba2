@@ -91,7 +91,7 @@ class GradCAM:
 
     @staticmethod
     def overlay_heatmap(heatmap, image, alpha=0.5,
-                        colormap=cv2.COLORMAP_JET):
+                        colormap=cv2.COLORMAP_HOT):
         """ Overlay the heatmap onto the input image.
 
             Arguments:

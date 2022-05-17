@@ -72,6 +72,36 @@ def load_dataset(path, target_size=(224, 224), batch_size=64, class_mode='binary
     return train_data, validation_data, test_data
 
 
+def load_data_for_evaluation(path, batch_size=64, train_set=False):
+    """Loads the test dataset for evaluation
+
+    Arguments:
+        path (str): path to the root directory of the dataset.
+        batch_size (int): size of the batch.
+        train_set (bool): whether to load the train set or the test set.
+    """
+    if train_set:
+        image_gen = ImageDataGenerator(rotation_range=20,  # rotate the image 20 degrees
+                                       width_shift_range=0.2,
+                                       height_shift_range=0.2,
+                                       rescale=1 / 255,  # Rescale the image by normalzing it.
+                                       shear_range=0.15,
+                                       # Shear means cutting away part of the image (max 20%)
+                                       zoom_range=0.15,  # Zoom in by 15% max
+                                       horizontal_flip=True,  # Allow horizontal flipping
+                                       fill_mode='nearest'
+                                       # Fill in missing pixels with the nearest filled value
+                                       )
+    else:
+        image_gen = ImageDataGenerator()
+
+    test_data = image_gen.flow_from_directory(path,
+                                              target_size=(224, 224),
+                                              batch_size=batch_size,
+                                              class_mode='binary')
+    return test_data
+
+
 def load_test_set(path):
     """
     Load test set from a path with its paths and labels

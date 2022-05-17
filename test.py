@@ -2,10 +2,10 @@ import argparse
 
 import tensorflow as tf
 from model.custom_model import load_model_with_metadata, get_predictions_from_model
-from model.dataset import load_classify_data, load_img_for_feature_maps
+from model.dataset import load_classify_data, load_img_for_feature_maps, load_data_for_evaluation
 from report_builder.report_generator import ReportGenerator
 
-parser = argparse.ArgumentParser(description='train')
+parser = argparse.ArgumentParser(description='test')
 parser.add_argument(
     '--model-dir',
     default='saved_models/2022-04-08-08-54-49',
@@ -62,13 +62,25 @@ if __name__ == '__main__':
     report_generator.save_classified_images(true_negatives_paths, img_prefix='true_negatives')
     report_generator.save_classified_images(true_positives_paths, img_prefix='true_positives')
 
+    test_data = load_data_for_evaluation(args.data_dir)
+
+    loss, accuracy, recall, precision, auc = model.evaluate(test_data)
+
+    try:
+        f1 = 2 * ((precision * recall) / (precision + recall))
+    except ZeroDivisionError:
+        f1 = 0
+        print('precision or recall is zero')
+
     report_generator.generate_test_info_page(model_name=metadata['model_name'], dataset_name=metadata['dataset_name'],
                                              dataset_size=metadata['dataset_size'][0],
                                              classified_image_size=len(images_for_prediction),
                                              true_positives=len(true_positives_paths),
                                              true_negatives=len(true_negatives_paths),
                                              false_positives=len(false_positives_paths),
-                                             false_negatives=len(false_negatives_paths))
+                                             false_negatives=len(false_negatives_paths),
+                                             loss=loss, accuracy=accuracy, recall=recall, precision=precision, auc=auc,
+                                             f1=f1)
 
     report_generator.generate_feature_map_page()
     report_generator.generate_grad_cam_page()

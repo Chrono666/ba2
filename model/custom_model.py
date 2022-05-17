@@ -171,6 +171,26 @@ def load_model_with_metadata(file_path):
     return model, metadata
 
 
+def load_old_ba1_model(model_path, weight_path):
+    """ Load BA1 trained model.
+
+    Arguments:
+        model_path {str} -- Path to the model.
+        weight_path {str} -- Path to the weights.
+    """
+    # load json and create model
+    file = open(model_path, 'r')
+    model_json = file.read()
+    file.close()
+    loaded_model = tf.keras.models.model_from_json(model_json)
+    # load weights
+    loaded_model.load_weights(weight_path)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001, beta_1=0.9, beta_2=0.999)
+    loaded_model.compile(loss="binary_crossentropy", optimizer=optimizer,
+                         metrics=['accuracy', 'Recall', 'Precision', 'AUC'])
+    return loaded_model
+
+
 def get_predictions_from_model(model, img_arr, file_list):
     """ Used a model to classify images and sort them according
         to true positives, true negatives, false positives, false negatives.

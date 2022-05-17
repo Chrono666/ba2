@@ -148,7 +148,7 @@ def plot_classified_images(img_paths, output_path, img_prefix):
         output_path (str): Path where to save the images.
         img_prefix (str): Prefix of the images.
     """
-    for index, img_path in enumerate(img_paths):
+    for index, img_path in tqdm(enumerate(img_paths)):
         img = plt.imread(img_path)
         plt.imshow(img)
         save_fig((img_prefix + str(index)), output_path)

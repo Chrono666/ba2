@@ -139,6 +139,7 @@ if __name__ == '__main__':
     try:
         f1 = 2 * ((precision * recall) / (precision + recall))
     except ZeroDivisionError:
+        f1 = 0
         print('precision or recall is zero')
 
     try:
