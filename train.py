@@ -117,13 +117,14 @@ if __name__ == '__main__':
     print(model.summary())
 
     # callbacks
+    csv_logger = tf.keras.callbacks.CSVLogger(time.asctime(time.localtime(time.time())), append=True, separator=';')
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=args.early_stopping)
 
     # train the model
     model = compile_model(model, args.learning_rate, args.beta_1, args.beta_2,
                           ['accuracy', 'Recall', 'Precision', 'AUC'])
     history = train_model(model, train_data, val_data, epochs=args.epochs,
-                          callbacks=[early_stopping])
+                          callbacks=[early_stopping, csv_logger])
 
     train_end = time.time()
     total_time = timedelta(seconds=(train_end - train_start))
