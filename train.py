@@ -116,8 +116,11 @@ if __name__ == '__main__':
     set_conv_layers_trainable(model, True, args.freeze)
     print(model.summary())
 
+    date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    csv_name = date + '.csv'
+
     # callbacks
-    csv_logger = tf.keras.callbacks.CSVLogger(time.asctime(time.localtime(time.time())), append=True, separator=';')
+    csv_logger = tf.keras.callbacks.CSVLogger(csv_name, append=True, separator=';')
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=args.early_stopping)
 
     # train the model

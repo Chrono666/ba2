@@ -8,7 +8,6 @@ parser = argparse.ArgumentParser(description='raw data preprocessing')
 
 parser.add_argument(
     '--data-dir',
-    default='data_for_classification',
     type=str,
     metavar='DD',
     help='path to data on which classification is to be performed')
